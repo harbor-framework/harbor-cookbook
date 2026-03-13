@@ -1,0 +1,4 @@
+jobs/
+src/
+.python-version
+uv.lock

@@ -1,0 +1,99 @@
+name: CI
+
+on:
+  pull_request:
+    branches: ["main"]
+  push:
+    branches: ["main"]
+
+jobs:
+  lint-and-format:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install the latest version of uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "latest"
+
+      - name: Set up Python 3.13
+        run: uv python pin 3.13
+
+      - name: Run ruff linting
+        run: uv run ruff check .
+
+      - name: Run ruff formatting
+        run: uv run ruff format --check .
+
+  validate-recipes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Validate recipe structure
+        run: |
+          status=0
+          for recipe in harbor_cookbook/recipes/*/; do
+            name=$(basename "$recipe")
+            echo "Checking $name..."
+
+            # Task recipes must have the required structure
+            if [ -d "$recipe/task" ]; then
+              for required in task/task.toml task/instruction.md task/environment/Dockerfile task/tests/test.sh; do
+                if [ ! -f "$recipe$required" ]; then
+                  echo "  MISSING: $required"
+                  status=1
+                fi
+              done
+            fi
+          done
+
+          exit $status
+
+      - name: Validate registry.json
+        run: |
+          REGISTRY=harbor_cookbook/recipes/registry.json
+
+          if ! python3 -m json.tool "$REGISTRY" > /dev/null 2>&1; then
+            echo "ERROR: registry.json is not valid JSON"
+            exit 1
+          fi
+
+          status=0
+
+          # Every recipe directory should have a registry entry
+          for recipe in harbor_cookbook/recipes/*/; do
+            name=$(basename "$recipe")
+            if ! python3 -c "
+          import json, sys
+          with open('$REGISTRY') as f:
+              data = json.load(f)
+          names = [r['name'] for r in data['recipes']]
+          sys.exit(0 if '$name' in names else 1)
+          "; then
+              echo "ERROR: recipe '$name' has no entry in registry.json"
+              status=1
+            fi
+          done
+
+          # Every registry entry's path should exist
+          python3 -c "
+          import json, os, sys
+          with open('harbor_cookbook/recipes/registry.json') as f:
+              data = json.load(f)
+          ok = True
+          for r in data['recipes']:
+              if not os.path.isdir(r['path']):
+                  print(f\"ERROR: registry entry '{r['name']}' points to non-existent path: {r['path']}\")
+                  ok = False
+          sys.exit(0 if ok else 1)
+          " || status=1
+
+          exit $status

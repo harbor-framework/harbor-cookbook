@@ -1,0 +1,24 @@
+version = "1.0"
+
+[metadata]
+difficulty = "easy"
+category = "programming"
+tags = ["mcp", "simulated-user", "cookbook"]
+
+[verifier]
+timeout_sec = 600.0
+
+[agent]
+timeout_sec = 600.0
+
+[environment]
+build_timeout_sec = 600.0
+cpus = 1
+memory_mb = 2048
+storage_mb = 10240
+allow_internet = true
+
+[[environment.mcp_servers]]
+name = "user-server"
+transport = "streamable-http"
+url = "http://user-server:8000/mcp"

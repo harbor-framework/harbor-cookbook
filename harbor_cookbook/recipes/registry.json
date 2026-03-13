@@ -3,22 +3,22 @@
     {
       "name": "simple-task",
       "description": "Bare-minimum task: one Dockerfile, an instruction, a pytest test, and a reference solution.",
-      "path": "harbor_cookbook/recipes/simple-task/task"
+      "path": "harbor_cookbook/recipes/simple-task"
     },
     {
       "name": "multi-container",
       "description": "Docker Compose task with an additional service the agent interacts with over the Docker network.",
-      "path": "harbor_cookbook/recipes/multi-container/task"
+      "path": "harbor_cookbook/recipes/multi-container"
     },
     {
       "name": "mcp-tools",
       "description": "Giving agents access to custom MCP tools via a FastMCP server running in a companion container.",
-      "path": "harbor_cookbook/recipes/mcp-tools/task"
+      "path": "harbor_cookbook/recipes/mcp-tools"
     },
     {
       "name": "simulated-user",
       "description": "An MCP server that acts as a simulated user the agent must talk to and discover requirements from.",
-      "path": "harbor_cookbook/recipes/simulated-user/task"
+      "path": "harbor_cookbook/recipes/simulated-user"
     }
   ]
 }

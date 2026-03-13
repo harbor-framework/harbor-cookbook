@@ -11,20 +11,19 @@ Multi-container tasks require the **docker** environment provider because they r
 ```
 multi-container/
 ├── README.md
-└── task/
-    ├── task.toml                  # Task configuration
-    ├── instruction.md             # Agent prompt
-    ├── environment/
-    │   ├── Dockerfile             # Agent container
-    │   ├── docker-compose.yaml    # Adds api-server service alongside main
-    │   └── api-server/            # A simple REST API
-    │       ├── Dockerfile
-    │       └── server.py
-    ├── tests/
-    │   ├── test.sh                # Verifier entrypoint
-    │   └── test_outputs.py        # Pytest assertions
-    └── solution/
-        └── solve.sh               # Reference solution
+├── task.toml                  # Task configuration
+├── instruction.md             # Agent prompt
+├── environment/
+│   ├── Dockerfile             # Agent container
+│   ├── docker-compose.yaml    # Adds api-server service alongside main
+│   └── api-server/            # A simple REST API
+│       ├── Dockerfile
+│       └── server.py
+├── tests/
+│   ├── test.sh                # Verifier entrypoint
+│   └── test_outputs.py        # Pytest assertions
+└── solution/
+    └── solve.sh               # Reference solution
 ```
 
 ## How it works
@@ -36,5 +35,5 @@ The `api-server` service exposes a REST API on port 5000. The agent can reach it
 ## Run
 
 ```bash
-harbor run -p recipes/multi-container/task --agent claude-code --model anthropic/claude-sonnet-4-1
+harbor run -p harbor_cookbook/recipes/multi-container --agent claude-code --model anthropic/claude-sonnet-4-6
 ```

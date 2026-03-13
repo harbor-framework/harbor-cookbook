@@ -7,20 +7,19 @@ A minimal Harbor task showing the basic directory structure: Dockerfile, instruc
 ```
 simple-task/
 ├── README.md
-└── task/
-    ├── task.toml              # Timeouts and resource limits
-    ├── instruction.md         # What the agent should do
-    ├── environment/
-    │   └── Dockerfile         # Agent container (ubuntu:24.04)
-    ├── tests/
-    │   ├── test.sh            # Installs pytest, runs tests, writes reward
-    │   └── test_state.py      # Pytest assertions
-    └── solution/
-        └── solve.sh           # Reference solution
+├── task.toml              # Timeouts and resource limits
+├── instruction.md         # What the agent should do
+├── environment/
+│   └── Dockerfile         # Agent container (ubuntu:24.04)
+├── tests/
+│   ├── test.sh            # Installs pytest, runs tests, writes reward
+│   └── test_state.py      # Pytest assertions
+└── solution/
+    └── solve.sh           # Reference solution
 ```
 
 ## Run
 
 ```bash
-harbor run -p recipes/simple-task/task --agent claude-code --model anthropic/claude-sonnet-4-1
+harbor run -p harbor_cookbook/recipes/simple-task --agent claude-code --model anthropic/claude-sonnet-4-6
 ```

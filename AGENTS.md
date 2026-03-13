@@ -4,7 +4,7 @@
 
 This repo contains recipes — self-contained examples showing how to build evaluations with [Harbor](https://github.com/laude-institute/harbor).
 
-Each recipe lives under `harbor_cookbook/recipes/<name>/` and contains a `README.md` plus a `task/` directory that Harbor can run directly.
+Each recipe lives under `harbor_cookbook/recipes/<name>/` and is a flat directory that Harbor can run directly.
 
 ## Repo Structure
 
@@ -37,17 +37,16 @@ Every recipe has:
 ```
 harbor_cookbook/recipes/<name>/
 ├── README.md              # What this recipe demonstrates and how to run it
-└── task/
-    ├── task.toml          # Task configuration (timeouts, resources, MCP servers)
-    ├── instruction.md     # Natural language instruction for the agent
-    ├── environment/
-    │   ├── Dockerfile     # Agent container
-    │   └── ...            # Optional: docker-compose.yaml, service dirs
-    ├── tests/
-    │   ├── test.sh        # Entrypoint — installs deps, runs tests, writes reward
-    │   └── test_*.py      # Pytest test files
-    └── solution/
-        └── solve.sh       # Reference solution
+├── task.toml              # Task configuration (timeouts, resources, MCP servers)
+├── instruction.md         # Natural language instruction for the agent
+├── environment/
+│   ├── Dockerfile         # Agent container
+│   └── ...                # Optional: docker-compose.yaml, service dirs
+├── tests/
+│   ├── test.sh            # Entrypoint — installs deps, runs tests, writes reward
+│   └── test_*.py          # Pytest test files
+└── solution/
+    └── solve.sh           # Reference solution
 ```
 
 ## Task Conventions
@@ -60,7 +59,7 @@ harbor_cookbook/recipes/<name>/
 ## Running a Recipe
 
 ```bash
-harbor run -p harbor_cookbook/recipes/<name>/task --agent claude-code --model anthropic/claude-sonnet-4-1
+harbor run -p harbor_cookbook/recipes/<name> --agent claude-code --model anthropic/claude-sonnet-4-6
 ```
 
 ## Code Style

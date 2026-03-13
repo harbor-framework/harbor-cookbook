@@ -45,8 +45,8 @@ jobs:
             echo "Checking $name..."
 
             # Task recipes must have the required structure
-            if [ -d "$recipe/task" ]; then
-              for required in task/task.toml task/instruction.md task/environment/Dockerfile task/tests/test.sh; do
+            if [ -f "$recipe/task.toml" ]; then
+              for required in task.toml instruction.md environment/Dockerfile tests/test.sh; do
                 if [ ! -f "$recipe$required" ]; then
                   echo "  MISSING: $required"
                   status=1

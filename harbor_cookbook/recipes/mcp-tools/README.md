@@ -7,20 +7,19 @@ Giving agents access to custom MCP tools via a FastMCP server running in a compa
 ```
 mcp-tools/
 ├── README.md
-└── task/
-    ├── task.toml                  # MCP server declared under [[environment.mcp_servers]]
-    ├── instruction.md             # Agent prompt
-    ├── environment/
-    │   ├── Dockerfile             # Agent container
-    │   ├── docker-compose.yaml    # Adds mcp-server service alongside main
-    │   └── mcp-server/            # FastMCP server (streamable-http)
-    │       ├── Dockerfile
-    │       └── server.py
-    ├── tests/
-    │   ├── test.sh                # Verifier entrypoint
-    │   └── test_outputs.py        # Pytest assertions
-    └── solution/
-        └── solve.sh               # Reference solution
+├── task.toml                  # MCP server declared under [[environment.mcp_servers]]
+├── instruction.md             # Agent prompt
+├── environment/
+│   ├── Dockerfile             # Agent container
+│   ├── docker-compose.yaml    # Adds mcp-server service alongside main
+│   └── mcp-server/            # FastMCP server (streamable-http)
+│       ├── Dockerfile
+│       └── server.py
+├── tests/
+│   ├── test.sh                # Verifier entrypoint
+│   └── test_outputs.py        # Pytest assertions
+└── solution/
+    └── solve.sh               # Reference solution
 ```
 
 ## How it works
@@ -32,7 +31,7 @@ The MCP server runs in a separate container and exposes tools over `streamable-h
 ## Run
 
 ```bash
-harbor run -p recipes/mcp-tools/task --agent claude-code --model anthropic/claude-sonnet-4-1
+harbor run -p harbor_cookbook/recipes/mcp-tools --agent claude-code --model anthropic/claude-sonnet-4-6
 ```
 
 ## Limitations

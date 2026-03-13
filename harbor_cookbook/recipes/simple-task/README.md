@@ -18,12 +18,6 @@ simple-task/
     └── solve.sh           # Reference solution
 ```
 
-## How it works
-
-The agent runs inside an `ubuntu:24.04` container and receives `instruction.md` — create a file with specific content. Harbor mounts the agent's working directory at `/app`.
-
-After the agent finishes (or times out), Harbor runs `tests/test.sh` in a separate verifier container. The test script installs pytest, runs `test_state.py` against `/app`, and writes `1` (pass) or `0` (fail) to `/logs/verifier/reward.txt`.
-
 ## Run
 
 ```bash

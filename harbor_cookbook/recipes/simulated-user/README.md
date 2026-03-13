@@ -2,10 +2,6 @@
 
 An MCP server that acts as a simulated user the agent can ask questions.
 
-## Limitations
-
-Multi-container tasks require the **docker** environment provider because they rely on Docker Compose networking. They are not supported on cloud providers (Daytona, Modal, E2B, etc.).
-
 ## Structure
 
 ```
@@ -28,7 +24,7 @@ simulated-user/
 
 ## How it works
 
-The MCP server (`environment/user-server/server.py`) exposes a single `ask_user` tool. It's a simple state machine that reveals requirements incrementally — first call returns the high-level ask, subsequent calls add details, then it tells the agent to go ahead.
+The MCP server (`environment/user-server/server.py`) exposes a single `ask_user` tool. It's a simple stateful tool that, in this case, reveals requirements incrementally — first call returns the high-level ask, subsequent calls add details, then it tells the agent to go ahead.
 
 The agent doesn't know what to build upfront; it must call `ask_user` to discover requirements, then implement the solution. Tests verify both the correct output and that the agent actually used the tool.
 
@@ -37,3 +33,7 @@ The agent doesn't know what to build upfront; it must call `ask_user` to discove
 ```bash
 harbor run -p harbor_cookbook/recipes/simulated-user --agent claude-code --model anthropic/claude-sonnet-4-6
 ```
+
+## Limitations
+
+Multi-container tasks require the **docker** environment provider because they rely on Docker Compose networking. They are not supported on cloud providers (Daytona, Modal, E2B, etc.).

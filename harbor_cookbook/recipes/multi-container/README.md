@@ -2,10 +2,6 @@
 
 Docker Compose task with an additional service the agent interacts with over the Docker network.
 
-## Limitations
-
-Multi-container tasks require the **docker** environment provider because they rely on Docker Compose networking. They are not supported on cloud providers (Daytona, Modal, E2B, etc.).
-
 ## Structure
 
 ```
@@ -37,3 +33,7 @@ Here, `docker-compose.yaml` adds an `api-server` service with a healthcheck. The
 ```bash
 harbor run -p harbor_cookbook/recipes/multi-container --agent claude-code --model anthropic/claude-sonnet-4-6
 ```
+
+## Limitations
+
+Multi-container tasks require the **docker** environment provider because they rely on Docker Compose networking. They are not supported on cloud providers (Daytona, Modal, E2B, etc.).

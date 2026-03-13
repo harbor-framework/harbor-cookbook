@@ -2,9 +2,7 @@
 
 [![Docs](https://img.shields.io/badge/Docs-000000?style=for-the-badge&logo=mdbook&color=105864)](https://harborframework.com/docs)
 
-Realistic examples of building evals and optimizing agents using [Harbor](https://github.com/harbor-framework/harbor).
-
-Each recipe under [`harbor_cookbook/recipes/`](harbor_cookbook/recipes/) can be used to initialize tasks with the `harbor` cli. 
+Realistic examples of building evals and optimizing agents using [Harbor](https://github.com/harbor-framework/harbor). 
 
 ## Getting Started
 
@@ -14,13 +12,13 @@ Install Harbor:
 uv tool install harbor
 ```
 
-Run any recipe:
+Run any task recipe:
 
 ```bash
 harbor run -p harbor_cookbook/recipes/<name> -a claude-code -m anthropic/claude-opus-4-6
 ```
 
-## Recipes
+## Task Recipes
 
 | Name                                                        | Description |
 |-------------------------------------------------------------|-------------|

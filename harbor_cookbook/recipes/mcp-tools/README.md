@@ -24,9 +24,11 @@ mcp-tools/
 
 ## How it works
 
-The `[[environment.mcp_servers]]` table in `task.toml` tells Harbor to pass the server config to the agent. Each agent decides how to consume it (e.g., Claude Code writes it to `~/.claude.json`).
+The `[[environment.mcp_servers]]` section in `task.toml` declares an MCP server. Harbor passes this config to the agent at startup — each agent decides how to consume it (e.g., Claude Code writes it to `~/.claude.json`).
 
-The MCP server runs in a separate container and exposes tools over `streamable-http`. The agent discovers and calls these tools through its native MCP support.
+The MCP server itself is a FastMCP app (`environment/mcp-server/server.py`) running in a companion container, exposed over `streamable-http` on port 8000. The agent discovers available tools and calls them through its native MCP support.
+
+The `docker-compose.yaml` wires up the companion container the same way as in the multi-container recipe.
 
 ## Run
 

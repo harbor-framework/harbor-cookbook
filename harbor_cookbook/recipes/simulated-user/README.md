@@ -28,9 +28,9 @@ simulated-user/
 
 ## How it works
 
-The MCP server exposes a single `ask_user` tool.
+The MCP server (`environment/user-server/server.py`) exposes a single `ask_user` tool. It's a simple state machine that reveals requirements incrementally — first call returns the high-level ask, subsequent calls add details, then it tells the agent to go ahead.
 
-Tests verify both the correct output and that the agent actually called `ask_user`.
+The agent doesn't know what to build upfront; it must call `ask_user` to discover requirements, then implement the solution. Tests verify both the correct output and that the agent actually used the tool.
 
 ## Run
 

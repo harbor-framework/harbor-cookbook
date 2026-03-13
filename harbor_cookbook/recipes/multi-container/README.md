@@ -1,6 +1,6 @@
 # multi-container
 
-Docker Compose task with an additional service the agent interacts with over the Docker network — no MCP involved.
+Docker Compose task with an additional service the agent interacts with over the Docker network.
 
 ## Limitations
 
@@ -28,9 +28,9 @@ multi-container/
 
 ## How it works
 
-Harbor merges `docker-compose.yaml` on top of its base config. The `main` service (the agent container) is configured automatically — you only define overrides and additional services.
+When `environment/docker-compose.yaml` is present, Harbor merges it on top of its base Compose config. The `main` service (agent container) is configured automatically — you only define overrides and additional services.
 
-The `api-server` service exposes a REST API on port 5000. The agent can reach it at `http://api-server:5000` via Docker networking.
+Here, `docker-compose.yaml` adds an `api-server` service with a healthcheck. The `main` service uses `depends_on` to wait for it. The agent reaches the API at `http://api-server:5000` via the Docker network — no port mapping needed.
 
 ## Run
 

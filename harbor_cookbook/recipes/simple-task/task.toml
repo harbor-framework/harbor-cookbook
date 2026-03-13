@@ -1,10 +1,5 @@
 version = "1.0"
 
-[metadata]
-difficulty = "easy"
-category = "programming"
-tags = ["minimal", "cookbook"]
-
 [verifier]
 timeout_sec = 120.0
 

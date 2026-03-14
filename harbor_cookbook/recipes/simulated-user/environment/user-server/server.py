@@ -12,7 +12,7 @@ call_count = 0
 
 
 @mcp.tool()
-def ask_user(message: str) -> str:
+def ask_user(question: str) -> str:
     """Ask the user a question and get their response."""
     global call_count
     call_count += 1

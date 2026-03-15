@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Restore normal DNS so the verifier can install dependencies
+echo "nameserver 127.0.0.11" > /etc/resolv.conf
+
 apt-get update
 apt-get install -y curl
 

@@ -27,9 +27,9 @@ computer-use/
 
 A companion container runs a virtual desktop (Xvfb + Fluxbox + xterm) alongside a FastMCP server that exposes `screenshot`, `click`, `type_text`, and `press_key` tools. The desktop and MCP server share a container because the tools need direct access to the X display.
 
-The agent takes a screenshot, reads a secret code from the image (using vision), and writes it to a file. This demonstrates how to build tasks that require visual understanding and desktop interaction.
+The agent takes a screenshot, reads a secret code from the image, and writes it to a file.
 
-The `[[environment.mcp_servers]]` section in `task.toml` declares the MCP server. Harbor passes this config to the agent at startup.
+The `[[environment.mcp_servers]]` section in `task.toml` declares the MCP server.
 
 ## Run
 

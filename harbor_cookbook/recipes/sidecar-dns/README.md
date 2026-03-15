@@ -1,6 +1,6 @@
 # sidecar-dns
 
-Sidecar DNS container that whitelists/blacklists network traffic for the agent container. The `main` container uses the sidecar as its DNS server; only whitelisted hostnames resolve.
+Example task implementing the sidecar DNS container pattern that whitelists/blacklists network traffic for the agent container. The `main` container uses the sidecar as its DNS server; only whitelisted hostnames resolve.
 
 ## Structure
 

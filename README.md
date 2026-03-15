@@ -26,6 +26,7 @@ harbor run -p harbor_cookbook/recipes/<name> -a claude-code -m anthropic/claude-
 | [multi-container](harbor_cookbook/recipes/multi-container/)   | Adding a companion service (a REST API) via Docker Compose that the agent interacts with over the network. |
 | [mcp-tools](harbor_cookbook/recipes/mcp-tools/)               | Agent gets custom tools via an MCP server (declared in `task.toml`, served over streamable-http). The agent discovers and calls tools through its native MCP support. |
 | [simulated-user](harbor_cookbook/recipes/simulated-user/)     | The agent can ask questions to a simulated user via a tool call. |
+| [computer-use](harbor_cookbook/recipes/computer-use/)         | Computer-use task with a virtual desktop and MCP tools for screenshots, clicks, typing, etc. |
 | [sidecar-dns](harbor_cookbook/recipes/sidecar-dns/)           | Sidecar DNS container that whitelists/blacklists network traffic for the agent. |
 
 See each recipe's README for structure and details.

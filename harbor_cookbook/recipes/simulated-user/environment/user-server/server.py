@@ -1,9 +1,3 @@
-"""Simulated user MCP server.
-
-Uses an LLM with a persona file to generate realistic user responses
-when the agent calls ask_user.
-"""
-
 import os
 from pathlib import Path
 
@@ -40,10 +34,10 @@ def ask_user(question: str) -> str:
         messages=conversation,
     )
 
-    # Store full content (including thinking blocks) in history for API compliance
+    # Store history
     conversation.append({"role": "assistant", "content": response.content})
 
-    # Return only text blocks to the agent
+    # Return only text blocks
     text_parts = [block.text for block in response.content if block.type == "text"]
     return "\n".join(text_parts)
 

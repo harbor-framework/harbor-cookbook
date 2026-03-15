@@ -4,8 +4,8 @@
 # You only need to specify overrides for `main` and define additional services.
 services:
   main:
-    dns:
-      - "10.0.0.53"
+    volumes:
+      - ./resolv.conf:/etc/resolv.conf:ro
     depends_on:
       dns-server:
         condition: service_healthy

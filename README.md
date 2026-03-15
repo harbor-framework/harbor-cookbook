@@ -22,7 +22,7 @@ harbor run -p harbor_cookbook/recipes/<name> -a claude-code -m anthropic/claude-
 
 | Name | Description |
 |:--|:--|
-| [simple-task](harbor_cookbook/recipes/simple-task/) | Bare-minimum task: one Dockerfile, an instruction, a pytest test, and a reference solution. |
+| [simple&#8209;task](harbor_cookbook/recipes/simple-task/) | Bare-minimum task: one Dockerfile, an instruction, a pytest test, and a reference solution. |
 | [multi&#8209;container](harbor_cookbook/recipes/multi-container/) | Adding a companion service (e.g. a REST API) that the agent interacts with over the network. |
 | [mcp&#8209;tools](harbor_cookbook/recipes/mcp-tools/) | Agent gets custom tools via an MCP server. |
 | [simulated&#8209;user](harbor_cookbook/recipes/simulated-user/) | The agent can ask questions to a simulated user via a tool call. |

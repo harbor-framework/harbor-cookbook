@@ -19,6 +19,11 @@
       "name": "simulated-user",
       "description": "An MCP server that acts as a simulated user the agent must talk to and discover requirements from.",
       "path": "harbor_cookbook/recipes/simulated-user"
+    },
+    {
+      "name": "sidecar-dns",
+      "description": "Sidecar DNS container that whitelists/blacklists network traffic for the agent container.",
+      "path": "harbor_cookbook/recipes/sidecar-dns"
     }
   ]
 }

@@ -1,6 +1,6 @@
 # simulated-user
 
-An MCP server that acts as a simulated user the agent can ask questions.
+An MCP server that acts as an LLM-powered simulated user the agent can ask questions.
 
 ## Structure
 
@@ -14,7 +14,8 @@ simulated-user/
 │   ├── docker-compose.yaml    # Adds user-server service alongside main
 │   └── user-server/           # Simulated user (FastMCP, streamable-http)
 │       ├── Dockerfile
-│       └── server.py
+│       ├── server.py
+│       └── persona.md         # User persona and requirements
 ├── tests/
 │   ├── test.sh                # Verifier entrypoint
 │   └── test_outputs.py        # Checks output and that ask_user was called
@@ -24,9 +25,18 @@ simulated-user/
 
 ## How it works
 
-The MCP server (`environment/user-server/server.py`) exposes a single `ask_user` tool. It's a simple stateful tool that, in this case, reveals requirements incrementally — first call returns the high-level ask, subsequent calls add details, then it tells the agent to go ahead.
+The MCP server (`environment/user-server/server.py`) exposes a single `ask_user` tool backed by an LLM. A persona file (`persona.md`) defines who the simulated user is and what they need — the LLM role-plays that persona, revealing requirements gradually and responding naturally to the agent's questions.
 
 The agent doesn't know what to build upfront; it must call `ask_user` to discover requirements, then implement the solution. Tests verify both the correct output and that the agent actually used the tool.
+
+To create a new task with a different simulated user, copy the recipe and swap `persona.md` — `server.py` stays identical.
+
+## Environment variables
+
+| Variable | Required | Description |
+|---|---|---|
+| `ANTHROPIC_API_KEY` | Yes | API key for the simulated user's LLM calls |
+| `SIM_USER_MODEL` | No | Model for the simulated user (default: `claude-sonnet-4-6`) |
 
 ## Run
 

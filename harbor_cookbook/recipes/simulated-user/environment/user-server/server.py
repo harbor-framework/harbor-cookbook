@@ -1,28 +1,51 @@
 """Simulated user MCP server.
 
-A simple state machine that reveals requirements incrementally
+Uses an LLM with a persona file to generate realistic user responses
 when the agent calls ask_user.
 """
 
+import os
+from pathlib import Path
+
+import anthropic
 from fastmcp import FastMCP
 
 mcp = FastMCP("simulated-user")
 
-call_count = 0
+client = anthropic.Anthropic()
+MODEL = os.environ.get("SIM_USER_MODEL") or "claude-sonnet-4-6"
+
+persona = Path("/app/persona.md").read_text()
+
+SYSTEM_PROMPT = (
+    "You are role-playing as a user talking to a coding assistant. "
+    "Stay in character at all times. Never break character or mention that you are an AI.\n\n"
+    f"{persona}"
+)
+
+conversation: list[dict] = []
 
 
 @mcp.tool()
 def ask_user(question: str) -> str:
     """Ask the user a question and get their response."""
-    global call_count
-    call_count += 1
+    conversation.append({"role": "user", "content": question})
 
-    if call_count == 1:
-        return "I need a Python script that converts CSV files to JSON."
-    elif call_count == 2:
-        return "The script should read from stdin and write to stdout."
-    else:
-        return "That's everything I need. Go ahead and build it."
+    response = client.messages.create(
+        model=MODEL,
+        max_tokens=1024,
+        thinking={"type": "adaptive"},
+        output_config={"effort": "low"},
+        system=SYSTEM_PROMPT,
+        messages=conversation,
+    )
+
+    # Store full content (including thinking blocks) in history for API compliance
+    conversation.append({"role": "assistant", "content": response.content})
+
+    # Return only text blocks to the agent
+    text_parts = [block.text for block in response.content if block.type == "text"]
+    return "\n".join(text_parts)
 
 
 if __name__ == "__main__":

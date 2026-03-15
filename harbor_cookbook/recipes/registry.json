@@ -1,34 +1,35 @@
 {
+  "git_url": "https://github.com/harbor-framework/harbor-cookbook.git",
   "recipes": [
     {
       "name": "simple-task",
       "description": "Bare-minimum task: one Dockerfile, an instruction, a pytest test, and a reference solution.",
-      "path": "harbor_cookbook/recipes/simple-task"
+      "path": "recipes/simple-task"
     },
     {
       "name": "multi-container",
       "description": "Docker Compose task with an additional service the agent interacts with over the Docker network.",
-      "path": "harbor_cookbook/recipes/multi-container"
+      "path": "recipes/multi-container"
     },
     {
       "name": "mcp-tools",
       "description": "Giving agents access to custom MCP tools via a FastMCP server running in a companion container.",
-      "path": "harbor_cookbook/recipes/mcp-tools"
+      "path": "recipes/mcp-tools"
     },
     {
       "name": "simulated-user",
       "description": "An MCP server that acts as a simulated user the agent must talk to and discover requirements from.",
-      "path": "harbor_cookbook/recipes/simulated-user"
+      "path": "recipes/simulated-user"
     },
     {
       "name": "computer-use",
       "description": "Computer-use task with a virtual desktop and MCP tools for screenshots, clicks, typing, and key presses.",
-      "path": "harbor_cookbook/recipes/computer-use"
+      "path": "recipes/computer-use"
     },
     {
       "name": "sidecar-dns",
       "description": "Sidecar DNS container that whitelists/blacklists network traffic for the agent container.",
-      "path": "harbor_cookbook/recipes/sidecar-dns"
+      "path": "recipes/sidecar-dns"
     }
   ]
 }

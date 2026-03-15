@@ -5,7 +5,7 @@
 services:
   main:
     volumes:
-      - ./resolv.conf:/etc/resolv.conf
+      - ./resolv.conf:/etc/resolv.conf:ro
     depends_on:
       dns-server:
         condition: service_healthy

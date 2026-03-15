@@ -1,6 +1,6 @@
 # simulated-user
 
-An MCP server that acts as an LLM-powered simulated user the agent can ask questions.
+Example implementation of a task with a simulated user that the agent can ask questions.
 
 ## Structure
 
@@ -25,7 +25,7 @@ simulated-user/
 
 ## How it works
 
-The MCP server (`environment/user-server/server.py`) exposes a single `ask_user` tool backed by an LLM. A persona file (`persona.md`) defines who the simulated user is and what they need — the LLM role-plays that persona, revealing requirements gradually and responding naturally to the agent's questions.
+The MCP server (`environment/user-server/server.py`) exposes a single `ask_user` tool. A persona file (`persona.md`) defines who the simulated user is.
 
 The agent doesn't know what to build upfront; it must call `ask_user` to discover requirements, then implement the solution. Tests verify both the correct output and that the agent actually used the tool.
 
@@ -36,7 +36,7 @@ To create a new task with a different simulated user, copy the recipe and swap `
 | Variable | Required | Description |
 |---|---|---|
 | `ANTHROPIC_API_KEY` | Yes | API key for the simulated user's LLM calls |
-| `SIM_USER_MODEL` | No | Model for the simulated user (default: `claude-sonnet-4-6`) |
+| `SIM_USER_MODEL` | No | Anthropic model for the simulated user (default: `claude-sonnet-4-6`) |
 
 ## Run
 

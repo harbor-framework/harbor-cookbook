@@ -11,6 +11,9 @@ services:
   user-server:
     build:
       context: ./user-server
+    environment:
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - SIM_USER_MODEL=${SIM_USER_MODEL:-}
     expose:
       - "8000"
     healthcheck:

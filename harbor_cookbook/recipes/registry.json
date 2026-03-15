@@ -21,6 +21,11 @@
       "path": "harbor_cookbook/recipes/simulated-user"
     },
     {
+      "name": "computer-use",
+      "description": "Computer-use task with a virtual desktop and MCP tools for screenshots, clicks, typing, and key presses.",
+      "path": "harbor_cookbook/recipes/computer-use"
+    },
+    {
       "name": "sidecar-dns",
       "description": "Sidecar DNS container that whitelists/blacklists network traffic for the agent container.",
       "path": "harbor_cookbook/recipes/sidecar-dns"

@@ -59,41 +59,28 @@ jobs:
 
       - name: Validate registry.json
         run: |
-          REGISTRY=harbor_cookbook/recipes/registry.json
-
-          if ! python3 -m json.tool "$REGISTRY" > /dev/null 2>&1; then
-            echo "ERROR: registry.json is not valid JSON"
-            exit 1
-          fi
-
-          status=0
-
-          # Every recipe directory should have a registry entry
-          for recipe in harbor_cookbook/recipes/*/; do
-            name=$(basename "$recipe")
-            if ! python3 -c "
-          import json, sys
-          with open('$REGISTRY') as f:
-              data = json.load(f)
-          names = [r['name'] for r in data['recipes']]
-          sys.exit(0 if '$name' in names else 1)
-          "; then
-              echo "ERROR: recipe '$name' has no entry in registry.json"
-              status=1
-            fi
-          done
-
-          # Every registry entry's path should exist
           python3 -c "
-          import json, os, sys
+          import json, glob, os, sys
+
           with open('harbor_cookbook/recipes/registry.json') as f:
               data = json.load(f)
-          ok = True
-          for r in data['recipes']:
-              if not os.path.isdir(r['path']):
-                  print(f\"ERROR: registry entry '{r['name']}' points to non-existent path: {r['path']}\")
-                  ok = False
-          sys.exit(0 if ok else 1)
-          " || status=1
 
-          exit $status
+          errors = []
+
+          if not data.get('git_url'):
+              errors.append('registry.json is missing git_url')
+
+          registry_names = {r['name'] for r in data['recipes']}
+          recipe_dirs = {os.path.basename(d.rstrip('/')) for d in glob.glob('harbor_cookbook/recipes/*/')}
+
+          for name in recipe_dirs - registry_names:
+              errors.append(f'recipe \"{name}\" has no entry in registry.json')
+
+          for r in data['recipes']:
+              if not os.path.isdir(os.path.join('harbor_cookbook', r['path'])):
+                  errors.append(f'registry entry \"{r[\"name\"]}\" points to non-existent path: {r[\"path\"]}')
+
+          for e in errors:
+              print(f'ERROR: {e}')
+          sys.exit(1 if errors else 0)
+          "

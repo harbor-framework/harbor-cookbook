@@ -1,0 +1,4 @@
+metrics:
+  - type: uv-script
+    kwargs:
+      script_path: harbor_cookbook/recipes/multi-verifier/metrics/per_dimension.py

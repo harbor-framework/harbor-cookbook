@@ -30,6 +30,11 @@
       "name": "sidecar-dns",
       "description": "Sidecar DNS container that whitelists/blacklists network traffic for the agent container.",
       "path": "recipes/sidecar-dns"
+    },
+    {
+      "name": "multi-verifier",
+      "description": "Multi-dimensional verification using reward.json with independent correctness and performance checks.",
+      "path": "recipes/multi-verifier"
     }
   ]
 }

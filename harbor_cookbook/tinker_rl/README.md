@@ -11,7 +11,7 @@ This directory is a pointer. the full recipe example lives in the tinker-cookboo
 Download Harbor tasks (e.g. Terminal-Bench 2.0):
 
 ```bash
-uvx harbor datasets download terminal-bench@2.0
+harbor datasets download terminal-bench@2.0
 ```
 
 Launch training:

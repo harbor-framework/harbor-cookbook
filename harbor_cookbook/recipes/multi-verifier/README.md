@@ -25,11 +25,15 @@ multi-verifier/
 ## Run
 
 ```bash
-# Single trial (task validation)
 harbor trials start -p harbor_cookbook/recipes/multi-verifier
-
-# Job with per-dimension metrics
-harbor run -p harbor_cookbook/recipes/multi-verifier -c harbor_cookbook/recipes/multi-verifier/config.yaml -a claude-code -m anthropic/claude-sonnet-4-6
 ```
 
-The `config.yaml` uses a custom `uv_script` metric that computes mean reward per dimension, since the default `mean` metric only supports single-key rewards.
+## Metrics note
+
+Harbor's default `mean` metric only supports single-key `reward.json`. Since this recipe writes two keys (`correctness`, `performance`), running `harbor run` requires a custom metric config:
+
+```bash
+harbor run -p harbor_cookbook/recipes/multi-verifier -c harbor_cookbook/recipes/multi-verifier/config.yaml
+```
+
+The included `config.yaml` uses a `uv-script` metric (`metrics/per_dimension.py`) that computes mean reward per dimension.

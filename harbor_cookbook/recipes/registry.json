@@ -32,9 +32,9 @@
       "path": "recipes/sidecar-dns"
     },
     {
-      "name": "multi-verifier",
+      "name": "multi-reward",
       "description": "Multiple verifiers writing independent rewards to reward.json.",
-      "path": "recipes/multi-verifier"
+      "path": "recipes/multi-reward"
     }
   ]
 }

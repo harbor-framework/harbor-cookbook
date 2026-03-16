@@ -1,11 +1,11 @@
-# multi-verifier
+# multi-reward
 
 Demonstrates multiple verifiers writing independent rewards to `reward.json` instead of a single binary `reward.txt`. The agent's solution is scored separately for **correctness** and **performance**.
 
 ## Structure
 
 ```
-multi-verifier/
+multi-reward/
 ├── README.md
 ├── task.toml              # Timeouts and resource limits
 ├── instruction.md         # What the agent should do
@@ -25,7 +25,7 @@ multi-verifier/
 ## Run
 
 ```bash
-harbor trials start -p harbor_cookbook/recipes/multi-verifier
+harbor trials start -p harbor_cookbook/recipes/multi-reward
 ```
 
 ## Metrics note
@@ -33,7 +33,7 @@ harbor trials start -p harbor_cookbook/recipes/multi-verifier
 Harbor's default `mean` metric only supports single-key `reward.json`. Since this recipe writes two keys (`correctness`, `performance`), running `harbor run` requires a custom metric config:
 
 ```bash
-harbor run -p harbor_cookbook/recipes/multi-verifier -c harbor_cookbook/recipes/multi-verifier/config.yaml
+harbor run -p harbor_cookbook/recipes/multi-reward -c harbor_cookbook/recipes/multi-reward/config.yaml
 ```
 
 The included `config.yaml` uses a `uv-script` metric (`metrics/per_dimension.py`) that computes mean reward per dimension.

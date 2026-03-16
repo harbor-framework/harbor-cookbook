@@ -1,6 +1,6 @@
 # multi-verifier
 
-Demonstrates multi-dimensional verification using `reward.json` instead of binary `reward.txt`. The agent's solution is scored on two independent dimensions: **correctness** and **performance**.
+Demonstrates multiple verifiers writing independent rewards to `reward.json` instead of a single binary `reward.txt`. The agent's solution is scored separately for **correctness** and **performance**.
 
 ## Structure
 

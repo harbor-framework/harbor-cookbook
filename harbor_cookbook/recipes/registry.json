@@ -33,7 +33,7 @@
     },
     {
       "name": "multi-verifier",
-      "description": "Multi-dimensional verification using reward.json with independent correctness and performance checks.",
+      "description": "Multiple verifiers writing independent rewards to reward.json.",
       "path": "recipes/multi-verifier"
     }
   ]

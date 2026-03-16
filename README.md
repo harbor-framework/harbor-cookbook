@@ -28,6 +28,6 @@ harbor run -p harbor_cookbook/recipes/<name> -a claude-code -m anthropic/claude-
 | [simulated&#8209;user](harbor_cookbook/recipes/simulated-user/) | The agent can ask questions to a simulated user via a tool call. |
 | [computer&#8209;use](harbor_cookbook/recipes/computer-use/) | Computer-use task with a virtual desktop and MCP tools for screenshots, clicks, typing, etc. |
 | [sidecar&#8209;dns](harbor_cookbook/recipes/sidecar-dns/) | Sidecar DNS container that whitelists/blacklists network traffic for the agent. |
-| [multi&#8209;verifier](harbor_cookbook/recipes/multi-verifier/) | Multiple verifiers writing independent rewards to `reward.json`. |
+| [multi&#8209;verifier](harbor_cookbook/recipes/multi-verifier/) | Multiple verifiers that grade independently and write separate rewards to `reward.json`. |
 
 See each recipe's README for structure and details.

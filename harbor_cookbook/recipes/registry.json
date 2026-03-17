@@ -22,9 +22,9 @@
       "path": "recipes/simulated-user"
     },
     {
-      "name": "computer-use",
-      "description": "Multi-step computer-use task requiring genuine GUI interaction: clicking buttons, typing a passphrase, and reading a revealed secret code.",
-      "path": "recipes/computer-use"
+      "name": "computer-use-ubuntu",
+      "description": "Computer-use task on an Ubuntu (XFCE4) virtual desktop requiring genuine GUI interaction.",
+      "path": "recipes/computer-use-ubuntu"
     },
     {
       "name": "sidecar-dns",

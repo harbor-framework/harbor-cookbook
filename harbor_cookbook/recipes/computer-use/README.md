@@ -4,7 +4,7 @@ Computer-use task where an agent interacts with a virtual desktop to solve a mul
 
 ## How it works
 
-A companion container runs a virtual desktop (Xvfb + Fluxbox) alongside a FastMCP server that exposes computer-use tools — screenshots, mouse actions, keyboard input, and more. The desktop and MCP server share a container because the tools need direct access to the X display.
+A companion container runs a virtual desktop (Xvfb + Fluxbox) alongside a FastMCP server that exposes computer-use tools. The desktop and MCP server share a container because the tools need direct access to the X display.
 
 A tkinter application (`challenge.py`) presents a multi-step challenge that requires the agent to click buttons, type text, and read the result from the screen. The task cannot be solved without genuine GUI interaction.
 

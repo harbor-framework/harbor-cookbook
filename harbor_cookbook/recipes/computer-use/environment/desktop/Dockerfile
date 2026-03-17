@@ -1,8 +1,12 @@
 FROM python:3.12-slim
 
-RUN apt-get update && apt-get install -y \
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
     xvfb \
-    fluxbox \
+    xfce4 \
+    xfce4-terminal \
+    dbus-x11 \
     python3-tk \
     scrot \
     xdotool \

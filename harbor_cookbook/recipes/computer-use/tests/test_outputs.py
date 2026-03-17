@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-SECRET_VALUE = "HARBOR-CU-2025"
+SECRET_VALUE = "HARBOR-CU-2025-VERIFIED"
 
 
 def test_secret_file_exists():

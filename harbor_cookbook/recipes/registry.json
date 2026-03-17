@@ -23,7 +23,7 @@
     },
     {
       "name": "computer-use",
-      "description": "Computer-use task with a virtual desktop and MCP tools for screenshots, clicks, typing, and key presses.",
+      "description": "Multi-step computer-use task requiring genuine GUI interaction: clicking buttons, typing a passphrase, and reading a revealed secret code.",
       "path": "recipes/computer-use"
     },
     {

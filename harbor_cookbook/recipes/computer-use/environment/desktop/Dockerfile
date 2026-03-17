@@ -3,7 +3,7 @@ FROM python:3.12-slim
 RUN apt-get update && apt-get install -y \
     xvfb \
     fluxbox \
-    xterm \
+    python3-tk \
     scrot \
     xdotool \
     && rm -rf /var/lib/apt/lists/*
@@ -15,6 +15,7 @@ ENV DISPLAY=:99
 WORKDIR /app
 
 COPY server.py .
+COPY challenge.py .
 COPY entrypoint.sh .
 RUN chmod +x entrypoint.sh
 

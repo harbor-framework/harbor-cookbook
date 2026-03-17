@@ -9,8 +9,8 @@ sleep 1
 fluxbox &
 sleep 1
 
-# Open a terminal displaying the secret code
-xterm -hold -e "echo 'SECRET_CODE: HARBOR-CU-2025'" &
+# Launch the challenge GUI
+python3 challenge.py &
 sleep 2
 
 # Start the MCP server (foreground)

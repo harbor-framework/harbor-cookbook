@@ -22,7 +22,7 @@ from harbor.trial.trial import Trial
 log = logging.getLogger(__name__)
 
 DEFAULT_AGENT = "codex"
-DEFAULT_MODEL = "openai/gpt-5-mini"
+DEFAULT_MODEL = "openai/gpt-5-nano"
 DEFAULT_ENVIRONMENT = EnvironmentType.DOCKER
 
 

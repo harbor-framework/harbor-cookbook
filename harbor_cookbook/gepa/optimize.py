@@ -23,6 +23,7 @@ from gepa.optimize_anything import (
 
 from utils import (
     DEFAULT_AGENT,
+    DEFAULT_ENVIRONMENT,
     DEFAULT_MODEL,
     download_tasks,
     run_trial,
@@ -61,6 +62,7 @@ BACKGROUND = (
 # Global state set by CLI args so the evaluate callback can access them.
 _agent_name: str = DEFAULT_AGENT
 _model_name: str = DEFAULT_MODEL
+_environment: str = DEFAULT_ENVIRONMENT
 
 
 def evaluate(candidate, example):
@@ -73,6 +75,7 @@ def evaluate(candidate, example):
         example.downloaded_path,
         agent_name=_agent_name,
         model_name=_model_name,
+        environment_type=_environment,
     )
     score = result["reward"]
 
@@ -104,6 +107,7 @@ def parse_args():
     g.add_argument("--agent", default=DEFAULT_AGENT, help="Harbor agent name (default: %(default)s)")
     g.add_argument("--model", default=DEFAULT_MODEL, help="LLM model for the agent (default: %(default)s)")
     g.add_argument("--max-workers", type=int, default=4, help="Concurrent Harbor trials (default: %(default)s)")
+    g.add_argument("--environment", default=DEFAULT_ENVIRONMENT, help="Harbor environment type (default: %(default)s)")
 
     # GEPA settings
     g = p.add_argument_group("GEPA optimization")
@@ -116,11 +120,12 @@ def parse_args():
 
 
 def main():
-    global _agent_name, _model_name
+    global _agent_name, _model_name, _environment
 
     args = parse_args()
     _agent_name = args.agent
     _model_name = args.model
+    _environment = args.environment
 
     logging.basicConfig(
         level=logging.INFO,

@@ -75,16 +75,15 @@ def run_trial(
     model_name: str = DEFAULT_MODEL,
     environment_type: EnvironmentType = DEFAULT_ENVIRONMENT,
 ) -> dict:
-    """Copy task dir, prepend prompt to instruction.md, run Harbor Trial."""
+    """Run a Harbor Trial with the evolved prompt template."""
     tmp = Path(tempfile.mkdtemp())
     try:
         task_dir = tmp / "task"
         shutil.copytree(task_path, task_dir, dirs_exist_ok=True)
 
-        # Prepend the evolved prompt to instruction.md
-        instruction_path = task_dir / "instruction.md"
-        original = instruction_path.read_text() if instruction_path.exists() else ""
-        instruction_path.write_text(prompt + "\n\n---\n\n" + original)
+        # Write evolved prompt as a Jinja2 template that wraps instruction.md
+        template_path = tmp / "prompt_template.txt"
+        template_path.write_text(prompt + "\n\n{{ instruction }}")
 
         # Forward API keys so the agent can call LLMs inside the container
         agent_env = {}
@@ -99,6 +98,7 @@ def run_trial(
                 name=agent_name,
                 model_name=model_name,
                 env=agent_env,
+                kwargs={"prompt_template_path": str(template_path)},
             ),
             environment=EnvironmentConfig(type=environment_type),
             verifier=VerifierConfig(),

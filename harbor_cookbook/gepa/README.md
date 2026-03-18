@@ -11,3 +11,9 @@ Docker running and an `OPENAI_API_KEY` (for the codex agent and GEPA's reflectio
 ```bash
 uv run harbor_cookbook/gepa/optimize.py
 ```
+
+See `--help` for options (agent, model, environment, worker count, iteration budget, etc.).
+
+## Results
+
+You should expect GEPA to roughly double accuracy within a few iterations — e.g. from ~28% to ~50% on a 32-task val set with codex/gpt-5-nano after 3 optimization loops.

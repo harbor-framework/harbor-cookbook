@@ -26,21 +26,10 @@ DEFAULT_AGENT = "codex"
 DEFAULT_MODEL = "openai/gpt-5-nano"
 DEFAULT_ENVIRONMENT = EnvironmentType.DOCKER
 
-# Shared event loop running in a background thread.  All Harbor trials are
-# submitted here so that async singletons (e.g. Daytona's client manager)
-# always see the same loop — regardless of how many GEPA worker threads
-# call run_trial() concurrently.
-_loop: asyncio.AbstractEventLoop | None = None
-_loop_thread: threading.Thread | None = None
-
-
-def _get_event_loop() -> asyncio.AbstractEventLoop:
-    global _loop, _loop_thread
-    if _loop is None:
-        _loop = asyncio.new_event_loop()
-        _loop_thread = threading.Thread(target=_loop.run_forever, daemon=True)
-        _loop_thread.start()
-    return _loop
+# Shared event loop so concurrent GEPA workers and async Harbor environments
+# (e.g. Daytona) all share one loop.
+_loop = asyncio.new_event_loop()
+threading.Thread(target=_loop.run_forever, daemon=True).start()
 
 
 def download_tasks():
@@ -118,10 +107,7 @@ def run_trial(
         )
 
         log.debug("Starting trial for %s", task_dir.name)
-        future = asyncio.run_coroutine_threadsafe(
-            Trial(config).run(), _get_event_loop()
-        )
-        result = future.result()
+        result = asyncio.run_coroutine_threadsafe(Trial(config).run(), _loop).result()
 
         rewards = result.verifier_result.rewards if result.verifier_result else {}
         exc = result.exception_info

@@ -99,7 +99,8 @@ def main():
         background=BACKGROUND,
         config=GEPAConfig(
             engine=EngineConfig(
-                max_metric_calls=100,
+                max_metric_calls=500,
+                max_workers=4,
                 run_dir="outputs/medagentbench",
             ),
             reflection=ReflectionConfig(

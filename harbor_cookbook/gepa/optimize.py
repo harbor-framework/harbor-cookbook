@@ -1,9 +1,13 @@
+# /// script
+# dependencies = ["harbor", "gepa"]
+# requires-python = ">=3.12"
+# ///
 """Discover medical agent prompts with GEPA on MedAgentBench.
 
 GEPA evolves a strategy prompt that gets prepended to each task's
 ``instruction.md``.  Every evaluation runs as a Harbor Trial using a real
-coding agent (claude-code by default) on the ``medagentbench@1.0`` registry
-dataset (prebuilt Docker image with FHIR server, official grading).
+coding agent on the ``medagentbench@1.0`` registry dataset (prebuilt
+Docker image with FHIR server, official grading).
 """
 
 from pathlib import Path
@@ -16,7 +20,7 @@ from gepa.optimize_anything import (
     optimize_anything,
 )
 
-from harbor_cookbook.gepa.utils import (
+from utils import (
     DEFAULT_AGENT,
     DEFAULT_MODEL,
     download_tasks,
@@ -96,7 +100,6 @@ def main():
         config=GEPAConfig(
             engine=EngineConfig(
                 max_metric_calls=100,
-                max_workers=4,
                 run_dir="outputs/medagentbench",
             ),
             reflection=ReflectionConfig(

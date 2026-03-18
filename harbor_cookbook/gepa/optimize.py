@@ -1,9 +1,9 @@
-"""Discover medical agent architectures with GEPA on MedAgentBench.
+"""Discover medical agent prompts with GEPA on MedAgentBench.
 
-GEPA evolves a ``solve()`` function that performs multi-turn FHIR API
-interactions to answer clinical EHR questions.  Every evaluation runs as a
-Harbor Trial using the ``medagentbench@1.0`` registry dataset (prebuilt
-Docker image with FHIR server, official grading).
+GEPA evolves a strategy prompt that gets prepended to each task's
+``instruction.md``.  Every evaluation runs as a Harbor Trial using a real
+coding agent (claude-code by default) on the ``medagentbench@1.0`` registry
+dataset (prebuilt Docker image with FHIR server, official grading).
 """
 
 from pathlib import Path
@@ -16,127 +16,57 @@ from gepa.optimize_anything import (
     optimize_anything,
 )
 
-from harbor_cookbook.gepa.utils import download_tasks, run_trial, split_tasks
+from harbor_cookbook.gepa.utils import (
+    DEFAULT_AGENT,
+    DEFAULT_MODEL,
+    download_tasks,
+    run_trial,
+    split_tasks,
+)
 
 # ---------------------------------------------------------------------------
-# Seed agent — mirrors the official MedAgentBench protocol:
-#   LLM outputs "GET url", "POST url\n[json]", or "FINISH([...])"
-#   Harness parses, executes FHIR calls, feeds observations back.
+# Seed prompt — prepended to each task's instruction.md.
+# Gives the agent high-level strategy for MedAgentBench tasks.
 # ---------------------------------------------------------------------------
-SEED = r'''
-import json
-import requests
-import litellm
-
-PROMPT = """You are an expert in using FHIR functions to assist medical professionals. \
-You are given a question and a set of possible functions. \
-Based on the question, you will need to make one or more function/tool calls to achieve the purpose.
-
-1. If you decide to invoke a GET function, you MUST put it in the format of
-GET url?param_name1=param_value1&param_name2=param_value2...
-
-2. If you decide to invoke a POST function, you MUST put it in the format of
-POST url
-[your payload data in JSON format]
-
-3. If you have got answers for all the questions and finished all the requested tasks, \
-you MUST call to finish the conversation in the format of \
-(make sure the list is JSON loadable.)
-FINISH([answer1, answer2, ...])
-
-Your response must be in the format of one of the three cases, and you can call \
-only one function each time. You SHOULD NOT include any other text in the response.
-
-Here is a list of functions in JSON format that you can invoke. \
-Note that you should use {api_base} as the api_base.
-{functions}
-
-Context: {context}
-Question: {question}"""
-
-MAX_ROUNDS = 8
-ACK = ("POST request accepted and executed successfully. "
-       "Please call FINISH if you have got answers for all the questions "
-       "and finished all the requested tasks")
-
-
-def solve(question, context, fhir_base, functions):
-    history = [{"role": "user", "content": PROMPT.format(
-        api_base=fhir_base, functions=functions,
-        context=context or "(none)", question=question,
-    )}]
-
-    for _ in range(MAX_ROUNDS):
-        resp = litellm.completion(
-            model="openai/gpt-5-mini",
-            messages=history,
-        )
-        reply = resp.choices[0].message.content.strip()
-        reply = reply.replace("```tool_code", "").replace("```", "").strip()
-        history.append({"role": "assistant", "content": reply})
-        print(f"Agent: {reply[:200]}", flush=True)
-
-        if reply.startswith("FINISH("):
-            result = json.loads(reply[len("FINISH("):-1])
-            return result, history
-
-        if reply.startswith("GET"):
-            url = reply[3:].strip()
-            if "&_format=json" not in url and "?_format=json" not in url:
-                url += "&_format=json" if "?" in url else "?_format=json"
-            try:
-                r = requests.get(url, timeout=30)
-                r.raise_for_status()
-                data = r.json()
-            except Exception as e:
-                data = {"error": str(e)}
-            obs = f"Here is the response from the GET request:\n{json.dumps(data)}"
-            print(f"GET {url} -> {str(data)[:200]}", flush=True)
-
-        elif reply.startswith("POST"):
-            lines = reply.split("\n", 1)
-            url = lines[0][4:].strip()
-            try:
-                payload = json.loads(lines[1]) if len(lines) > 1 else {}
-                r = requests.post(url, json=payload, timeout=30)
-            except Exception:
-                pass
-            obs = ACK
-            print(f"POST {url}", flush=True)
-
-        else:
-            obs = "Invalid action. Use GET, POST, or FINISH."
-
-        history.append({"role": "user", "content": obs})
-
-    return [], history
-'''.strip()
+SEED = """\
+Answer the clinical question by querying the FHIR server. Return exact values \
+from the data, not explanations. Use `_sort=-date&_count=1` for "most recent" \
+queries. Call `medagentbench_cli.py finish '[...]'` with a JSON list as the \
+final step.
+"""
 
 OBJECTIVE = (
-    "Optimize a solve(question, context, fhir_base, functions) function that "
-    "answers clinical EHR questions by interacting with a FHIR server. "
-    "The function uses litellm.completion() for LLM calls and requests for "
-    "FHIR HTTP calls. It returns (result_list, history). "
+    "Optimize a strategy prompt that gets prepended to MedAgentBench task "
+    "instructions. The prompt guides a coding agent on how to "
+    "interact with a FHIR server and answer clinical EHR questions. "
     "Graded by the official MedAgentBench verifier (binary: 1=correct, 0=wrong)."
 )
 
 BACKGROUND = (
     "MedAgentBench tasks span 10 categories: patient lookup, lab results, "
     "vitals, medications, conditions, procedures, service requests, and "
-    "clinical reasoning. The FHIR server holds synthetic patient records.\n\n"
-    "The seed follows the official MedAgentBench protocol: the LLM outputs "
-    "'GET url', 'POST url\\n[json]', or 'FINISH([answers])'. The harness "
-    "executes FHIR calls and feeds observations back as chat history.\n\n"
+    "clinical reasoning. Each task runs in a Docker container with a FHIR "
+    "server at http://localhost:8080/fhir/.\n\n"
+    "The agent receives the task's instruction.md (with question, context, "
+    "FHIR server URL, CLI usage, and output format) prepended with the "
+    "strategy prompt being optimized. The agent must query the FHIR server "
+    "and write the answer to /workspace/answer.json.\n\n"
+    "The strategy prompt should help the agent approach tasks more effectively "
+    "— better FHIR query patterns, answer formatting, error recovery, etc."
 )
 
 
 def evaluate(candidate, example):
-    """GEPA evaluator: run candidate in a Harbor trial for one task."""
+    """GEPA evaluator: run candidate prompt in a Harbor trial for one task."""
     task_id = example.id.name
-    result = run_trial(candidate, example.downloaded_path)
+    result = run_trial(
+        candidate,
+        example.downloaded_path,
+        agent_name=DEFAULT_AGENT,
+        model_name=DEFAULT_MODEL,
+    )
     score = result["reward"]
 
-    # Compact summary for oa.log (aggregated across minibatch)
     summary = f"[{task_id}] reward={score}"
     if result["error"]:
         summary += f" error={result['error']}"
@@ -144,8 +74,6 @@ def evaluate(candidate, example):
         summary += f" verifier={result['verifier_output']}"
     oa.log(summary)
 
-    # Detailed trajectory goes in side_info dict — GEPA selects per-example
-    # and only shows the reflection minibatch, so this stays manageable.
     return score, {
         "task_id": task_id,
         "Verifier": result["verifier_output"],
@@ -179,11 +107,11 @@ def main():
 
     out_dir = Path("outputs/medagentbench")
     out_dir.mkdir(parents=True, exist_ok=True)
-    (out_dir / "best_agent.py").write_text(result.best_candidate)
+    (out_dir / "best_prompt.txt").write_text(result.best_candidate)
 
     best_score = result.val_aggregate_scores[result.best_idx]
     print(f"\nBest val score: {best_score:.3f}")
-    print(f"Best agent written to {out_dir / 'best_agent.py'}")
+    print(f"Best prompt written to {out_dir / 'best_prompt.txt'}")
 
 
 if __name__ == "__main__":

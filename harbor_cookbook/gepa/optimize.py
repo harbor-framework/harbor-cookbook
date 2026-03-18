@@ -9,6 +9,7 @@ Harbor's prompt_template_path mechanism.  Evaluated by running a coding
 agent (codex by default) on medagentbench@1.0 Harbor Trials.
 """
 
+import argparse
 import logging
 from pathlib import Path
 
@@ -57,6 +58,11 @@ BACKGROUND = (
 )
 
 
+# Global state set by CLI args so the evaluate callback can access them.
+_agent_name: str = DEFAULT_AGENT
+_model_name: str = DEFAULT_MODEL
+
+
 def evaluate(candidate, example):
     """Run one Harbor trial and return (score, side_info)."""
     task_id = example.id.name
@@ -65,8 +71,8 @@ def evaluate(candidate, example):
     result = run_trial(
         candidate,
         example.downloaded_path,
-        agent_name=DEFAULT_AGENT,
-        model_name=DEFAULT_MODEL,
+        agent_name=_agent_name,
+        model_name=_model_name,
     )
     score = result["reward"]
 
@@ -90,7 +96,32 @@ def evaluate(candidate, example):
     }
 
 
+def parse_args():
+    p = argparse.ArgumentParser(description=__doc__)
+
+    # Harbor trial settings
+    g = p.add_argument_group("Harbor trials")
+    g.add_argument("--agent", default=DEFAULT_AGENT, help="Harbor agent name (default: %(default)s)")
+    g.add_argument("--model", default=DEFAULT_MODEL, help="LLM model for the agent (default: %(default)s)")
+    g.add_argument("--max-workers", type=int, default=4, help="Concurrent Harbor trials (default: %(default)s)")
+
+    # GEPA settings
+    g = p.add_argument_group("GEPA optimization")
+    g.add_argument("--max-evals", type=int, default=100, help="Total evaluation budget (default: %(default)s)")
+    g.add_argument("--reflection-model", default="openai/gpt-5.4", help="LLM for GEPA reflection (default: %(default)s)")
+    g.add_argument("--max-val", type=int, default=None, help="Cap the val set size (default: use full val set)")
+    g.add_argument("--output-dir", default="outputs/medagentbench", help="Directory for results (default: %(default)s)")
+
+    return p.parse_args()
+
+
 def main():
+    global _agent_name, _model_name
+
+    args = parse_args()
+    _agent_name = args.agent
+    _model_name = args.model
+
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s  %(levelname)-8s  %(message)s",
@@ -99,10 +130,13 @@ def main():
 
     log.info("Downloading medagentbench@1.0 dataset ...")
     items = download_tasks()
-    train, val = split_tasks(items)
+    train, val = split_tasks(items, max_val=args.max_val)
     log.info("Dataset ready — %d train, %d val tasks", len(train), len(val))
 
-    log.info("Starting GEPA optimization (agent=%s, model=%s)", DEFAULT_AGENT, DEFAULT_MODEL)
+    log.info(
+        "Starting GEPA optimization (agent=%s, model=%s, workers=%d, evals=%d)",
+        _agent_name, _model_name, args.max_workers, args.max_evals,
+    )
     result = optimize_anything(
         seed_candidate=SEED,
         evaluator=evaluate,
@@ -112,17 +146,17 @@ def main():
         background=BACKGROUND,
         config=GEPAConfig(
             engine=EngineConfig(
-                max_metric_calls=100,
-                max_workers=4,
-                run_dir="outputs/medagentbench",
+                max_metric_calls=args.max_evals,
+                max_workers=args.max_workers,
+                run_dir=args.output_dir,
             ),
             reflection=ReflectionConfig(
-                reflection_lm="openai/gpt-5.4",
+                reflection_lm=args.reflection_model,
             ),
         ),
     )
 
-    out_dir = Path("outputs/medagentbench")
+    out_dir = Path(args.output_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "best_prompt.txt").write_text(result.best_candidate)
 

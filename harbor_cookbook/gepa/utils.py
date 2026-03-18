@@ -26,8 +26,7 @@ DEFAULT_AGENT = "codex"
 DEFAULT_MODEL = "openai/gpt-5-nano"
 DEFAULT_ENVIRONMENT = EnvironmentType.DOCKER
 
-# Shared event loop so concurrent GEPA workers and async Harbor environments
-# (e.g. Daytona) all share one loop.
+# Single event loop shared across GEPA worker threads (required by Daytona's async singleton).
 _loop = asyncio.new_event_loop()
 threading.Thread(target=_loop.run_forever, daemon=True).start()
 

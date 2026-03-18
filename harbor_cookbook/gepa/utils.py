@@ -1,6 +1,7 @@
 """Utilities for downloading MedAgentBench tasks and running Harbor trials."""
 
 import asyncio
+import logging
 import os
 import shutil
 import tempfile
@@ -18,30 +19,27 @@ from harbor.models.trial.config import (
 from harbor.registry.client import RegistryClientFactory
 from harbor.trial.trial import Trial
 
-# Default agent, model, and environment for trials
+log = logging.getLogger(__name__)
+
 DEFAULT_AGENT = "codex"
 DEFAULT_MODEL = "openai/gpt-5-mini"
 DEFAULT_ENVIRONMENT = EnvironmentType.DOCKER
 
 
 def download_tasks():
-    """Download medagentbench@1.0 tasks, return list of DownloadedDatasetItems."""
+    """Download medagentbench@1.0 tasks via the Harbor registry."""
     client = RegistryClientFactory.create()
     return client.download_dataset("medagentbench", version="1.0")
 
 
 def split_tasks(items, max_val: int | None = None):
-    """Stratified split: train (indices 1-20), val (21-30) per task type.
+    """Stratified train/val split (indices 1-20 train, 21-30 val per type).
 
-    Task IDs follow the pattern taskX_Y where X is type (1-10) and Y is
-    the instance number (1-30).  Returns (train, val).
-
-    If *max_val* is set, the val set is truncated to that many tasks
-    (still stratified — takes the first N per type evenly).
+    If *max_val* is set the val set is capped at that size.
     """
     by_type = defaultdict(list)
     for item in items:
-        name = item.id.name  # e.g. "task1_5"
+        name = item.id.name
         parts = name.rsplit("_", 1)
         by_type[parts[0]].append((int(parts[1]), item))
 
@@ -57,7 +55,7 @@ def split_tasks(items, max_val: int | None = None):
 
 
 def _read_trial_file(trials_dir: Path, relative: str, limit: int = 3000) -> str:
-    """Read a file from the trial output directory, truncating to limit chars."""
+    """Read a file from the trial output, truncating to *limit* chars."""
     for trial_dir in trials_dir.iterdir():
         path = trial_dir / relative
         if path.is_file():
@@ -75,17 +73,15 @@ def run_trial(
     model_name: str = DEFAULT_MODEL,
     environment_type: EnvironmentType = DEFAULT_ENVIRONMENT,
 ) -> dict:
-    """Run a Harbor Trial with the evolved prompt template."""
+    """Run a single Harbor Trial with *prompt* as the prompt template."""
     tmp = Path(tempfile.mkdtemp())
     try:
         task_dir = tmp / "task"
         shutil.copytree(task_path, task_dir, dirs_exist_ok=True)
 
-        # Write evolved prompt as a Jinja2 template that wraps instruction.md
         template_path = tmp / "prompt_template.txt"
         template_path.write_text(prompt + "\n\n{{ instruction }}")
 
-        # Forward API keys so the agent can call LLMs inside the container
         agent_env = {}
         for key in ("OPENAI_API_KEY", "ANTHROPIC_API_KEY"):
             if key in os.environ:
@@ -103,18 +99,15 @@ def run_trial(
             environment=EnvironmentConfig(type=environment_type),
             verifier=VerifierConfig(),
         )
+
+        log.debug("Starting trial for %s", task_dir.name)
         result = asyncio.run(Trial(config).run())
 
         rewards = result.verifier_result.rewards if result.verifier_result else {}
         exc = result.exception_info
 
-        # Read agent trajectory and verifier output before cleanup
-        agent_output = _read_trial_file(
-            tmp / "trials", f"agent/{agent_name}.txt"
-        )
-        verifier_output = _read_trial_file(
-            tmp / "trials", "verifier/test-output.txt"
-        )
+        agent_output = _read_trial_file(tmp / "trials", f"agent/{agent_name}.txt")
+        verifier_output = _read_trial_file(tmp / "trials", "verifier/test-output.txt")
 
         return {
             "reward": float(rewards.get("reward", 0)),
@@ -123,6 +116,7 @@ def run_trial(
             "verifier_output": verifier_output,
         }
     except Exception as e:
+        log.error("Trial failed: %s", e)
         return {
             "reward": 0.0,
             "error": str(e),

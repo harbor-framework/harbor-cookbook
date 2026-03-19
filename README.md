@@ -30,8 +30,6 @@ harbor run -p harbor_cookbook/recipes/<name> -a claude-code -m anthropic/claude-
 | [dns&#8209;blacklisting](harbor_cookbook/recipes/dns-blacklisting/) | Domain blacklisting via `/etc/hosts` and a block-page HTTP server with non-root user isolation. |
 | [multi&#8209;reward](harbor_cookbook/recipes/multi-reward/) | Multiple verifiers that grade independently and write separate rewards to `reward.json`. |
 
-See each recipe's README for structure and details.
-
 ## Optimization Examples
 
 | Name | Description |

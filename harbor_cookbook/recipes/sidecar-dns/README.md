@@ -1,42 +1,42 @@
 # sidecar-dns
 
-Example task implementing the sidecar DNS container pattern that whitelists/blacklists network traffic for the agent container. The `main` container uses the sidecar as its DNS server; only whitelisted hostnames resolve.
+DNS filtering via a dnsmasq sidecar container. The `main` container uses the sidecar as its DNS server; blocked domains return NXDOMAIN.
 
 ## Structure
 
 ```
 sidecar-dns/
-├── README.md
-├── task.toml                  # Task configuration
-├── instruction.md             # Agent prompt
+├── task.toml
+├── instruction.md
 ├── environment/
-│   ├── Dockerfile             # Agent container
-│   ├── docker-compose.yaml    # Custom network with DNS sidecar
-│   └── dns-server/            # dnsmasq-based DNS filter
+│   ├── Dockerfile
+│   ├── docker-compose.yaml
+│   ├── resolv.conf
+│   └── dns-server/
 │       ├── Dockerfile
 │       └── dnsmasq.conf
 ├── tests/
-│   ├── test.sh                # Verifier entrypoint
-│   └── test_outputs.py        # Pytest assertions
+│   ├── test.sh
+│   └── test_outputs.py
 └── solution/
-    └── solve.sh               # Reference solution
+    └── solve.sh
 ```
 
 ## How it works
 
-Two containers run on a custom Docker network (`dnsnet`, `10.0.0.0/24`):
+Two containers on a custom Docker network (`dnsnet`, `10.0.0.0/24`):
 
-1. **`main`** (agent) — uses `dns: ["10.0.0.53"]` so all DNS queries go through the sidecar
-2. **`dns-server`** — Alpine + `dnsmasq` at static IP `10.0.0.53`; forwards whitelisted names (`example.com`) to Docker's embedded DNS (`127.0.0.11`) and blocks everything else
+1. **`main`** (agent) — resolv.conf points to `10.0.0.53` (the sidecar)
+2. **`dns-server`** — dnsmasq at `10.0.0.53`; blocks `google.com` and `wikipedia.org`, forwards everything else to `8.8.8.8`
 
 The agent must figure out which domains resolve and which are blocked.
 
 ## Run
 
 ```bash
-harbor run -p harbor_cookbook/recipes/sidecar-dns --agent claude-code --model anthropic/claude-sonnet-4-6
+# Docker
+harbor run -p harbor_cookbook/recipes/sidecar-dns --agent codex --model openai/o4-mini
+
+# Daytona (requires a docker-dind snapshot)
+harbor run -p harbor_cookbook/recipes/sidecar-dns --agent codex --model openai/o4-mini --env daytona --ek dind_snapshot=docker-dind
 ```
-
-## Limitations
-
-Multi-container tasks require the **docker** environment provider because they rely on Docker Compose networking. They are not supported on cloud providers (Daytona, Modal, E2B, etc.).

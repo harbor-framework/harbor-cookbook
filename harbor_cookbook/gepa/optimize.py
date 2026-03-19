@@ -104,19 +104,64 @@ def parse_args():
 
     # Harbor trial settings
     g = p.add_argument_group("Harbor trials")
-    g.add_argument("--agent", default=DEFAULT_AGENT, help="Harbor agent name (default: %(default)s)")
-    g.add_argument("--model", default=DEFAULT_MODEL, help="LLM model for the agent (default: %(default)s)")
-    g.add_argument("--max-workers", type=int, default=4, help="Concurrent Harbor trials (default: %(default)s)")
-    g.add_argument("--environment", default=DEFAULT_ENVIRONMENT, help="Harbor environment type (default: %(default)s)")
+    g.add_argument(
+        "--agent",
+        default=DEFAULT_AGENT,
+        help="Harbor agent name (default: %(default)s)",
+    )
+    g.add_argument(
+        "--model",
+        default=DEFAULT_MODEL,
+        help="LLM model for the agent (default: %(default)s)",
+    )
+    g.add_argument(
+        "--max-workers",
+        type=int,
+        default=4,
+        help="Concurrent Harbor trials (default: %(default)s)",
+    )
+    g.add_argument(
+        "--environment",
+        default=DEFAULT_ENVIRONMENT,
+        help="Harbor environment type (default: %(default)s)",
+    )
 
     # GEPA settings
     g = p.add_argument_group("GEPA optimization")
-    g.add_argument("--max-evals", type=int, default=100, help="Total evaluation budget (default: %(default)s)")
-    g.add_argument("--max-iterations", type=int, default=None, help="Max optimization iterations (default: unlimited)")
-    g.add_argument("--subsample-size", type=int, default=3, help="Train tasks per iteration subsample (default: %(default)s)")
-    g.add_argument("--reflection-model", default="openai/gpt-5.4", help="LLM for GEPA reflection (default: %(default)s)")
-    g.add_argument("--max-val", type=int, default=None, help="Cap the val set size (default: use full val set)")
-    g.add_argument("--output-dir", default="outputs/medagentbench", help="Directory for results (default: %(default)s)")
+    g.add_argument(
+        "--max-evals",
+        type=int,
+        default=100,
+        help="Total evaluation budget (default: %(default)s)",
+    )
+    g.add_argument(
+        "--max-iterations",
+        type=int,
+        default=None,
+        help="Max optimization iterations (default: unlimited)",
+    )
+    g.add_argument(
+        "--subsample-size",
+        type=int,
+        default=3,
+        help="Train tasks per iteration subsample (default: %(default)s)",
+    )
+    g.add_argument(
+        "--reflection-model",
+        default="openai/gpt-5.4",
+        help="LLM for GEPA reflection (default: %(default)s)",
+    )
+    g.add_argument(
+        "--max-val",
+        type=int,
+        default=None,
+        help="Cap the val set size (default: use full val set)",
+    )
+    g.add_argument(
+        "--output-dir",
+        default="outputs/medagentbench",
+        help="Directory for results (default: %(default)s)",
+    )
 
     return p.parse_args()
 
@@ -142,7 +187,10 @@ def main():
 
     log.info(
         "Starting GEPA optimization (agent=%s, model=%s, workers=%d, evals=%d)",
-        _agent_name, _model_name, args.max_workers, args.max_evals,
+        _agent_name,
+        _model_name,
+        args.max_workers,
+        args.max_evals,
     )
     result = optimize_anything(
         seed_candidate=SEED,

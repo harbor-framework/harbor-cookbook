@@ -1,0 +1,15 @@
+version = "1.0"
+
+[verifier]
+timeout_sec = 600.0
+
+[agent]
+timeout_sec = 600.0
+
+[environment]
+build_timeout_sec = 1800.0
+cpus = 4
+memory_mb = 8192
+storage_mb = 65536
+allow_internet = true
+os_type = "windows"

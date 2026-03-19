@@ -35,6 +35,11 @@
       "name": "multi-reward",
       "description": "Multiple verifiers writing independent rewards to reward.json.",
       "path": "recipes/multi-reward"
+    },
+    {
+      "name": "single-container-dns",
+      "description": "Single-container domain blacklisting using /etc/hosts, a block server, and Linux user isolation.",
+      "path": "recipes/single-container-dns"
     }
   ]
 }

@@ -27,9 +27,9 @@
       "path": "recipes/computer-use"
     },
     {
-      "name": "dns-filtering",
+      "name": "dns-blacklisting",
       "description": "Domain blacklisting via /etc/hosts and a block-page HTTP server with non-root user isolation.",
-      "path": "recipes/dns-filtering"
+      "path": "recipes/dns-blacklisting"
     },
     {
       "name": "multi-reward",

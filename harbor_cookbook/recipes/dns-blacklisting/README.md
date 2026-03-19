@@ -1,11 +1,11 @@
-# dns-filtering
+# dns-blacklisting
 
 Domain blacklisting via `/etc/hosts` and a block-page HTTP server. The agent runs as a non-root user and must figure out which domains are reachable.
 
 ## Structure
 
 ```
-dns-filtering/
+dns-blacklisting/
 ├── task.toml
 ├── instruction.md
 ├── environment/
@@ -22,7 +22,7 @@ dns-filtering/
 ## Run
 
 ```bash
-harbor run -p harbor_cookbook/recipes/dns-filtering --agent claude-code --model anthropic/claude-sonnet-4-6
+harbor run -p harbor_cookbook/recipes/dns-blacklisting --agent claude-code --model anthropic/claude-sonnet-4-6
 ```
 
 

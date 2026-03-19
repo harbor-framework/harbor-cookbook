@@ -28,7 +28,7 @@
     },
     {
       "name": "sidecar-dns",
-      "description": "Sidecar DNS container that whitelists/blacklists network traffic for the agent container.",
+      "description": "Domain blacklisting via /etc/hosts and a block-page HTTP server with non-root user isolation.",
       "path": "recipes/sidecar-dns"
     },
     {

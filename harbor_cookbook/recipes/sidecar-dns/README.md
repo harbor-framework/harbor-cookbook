@@ -1,35 +1,23 @@
 # sidecar-dns
 
-Example task implementing the sidecar DNS container pattern that whitelists/blacklists network traffic for the agent container. The `main` container uses the sidecar as its DNS server; only whitelisted hostnames resolve.
+Domain blacklisting via `/etc/hosts` and a block-page HTTP server. The agent runs as a non-root user and must figure out which domains are reachable.
 
 ## Structure
 
 ```
 sidecar-dns/
-├── README.md
-├── task.toml                  # Task configuration
-├── instruction.md             # Agent prompt
+├── task.toml
+├── instruction.md
 ├── environment/
-│   ├── Dockerfile             # Agent container
-│   ├── docker-compose.yaml    # Custom network with DNS sidecar
-│   └── dns-server/            # dnsmasq-based DNS filter
-│       ├── Dockerfile
-│       └── dnsmasq.conf
+│   ├── Dockerfile
+│   ├── entrypoint.sh
+│   └── block-server.py
 ├── tests/
-│   ├── test.sh                # Verifier entrypoint
-│   └── test_outputs.py        # Pytest assertions
+│   ├── test.sh
+│   └── test_dns.py
 └── solution/
-    └── solve.sh               # Reference solution
+    └── solve.sh
 ```
-
-## How it works
-
-Two containers run on a custom Docker network (`dnsnet`, `10.0.0.0/24`):
-
-1. **`main`** (agent) — uses `dns: ["10.0.0.53"]` so all DNS queries go through the sidecar
-2. **`dns-server`** — Alpine + `dnsmasq` at static IP `10.0.0.53`; forwards whitelisted names (`example.com`) to Docker's embedded DNS (`127.0.0.11`) and blocks everything else
-
-The agent must figure out which domains resolve and which are blocked.
 
 ## Run
 
@@ -37,6 +25,12 @@ The agent must figure out which domains resolve and which are blocked.
 harbor run -p harbor_cookbook/recipes/sidecar-dns --agent claude-code --model anthropic/claude-sonnet-4-6
 ```
 
+
+## How it works
+
+The entrypoint runs as root and adds blocked domains to `/etc/hosts`, pointing them to `127.0.0.1`. A small Python HTTP server on port 80 returns a 403 "ACCESS DENIED" for any request to a blocked domain. The agent runs as a non-root user via `gosu` and cannot modify `/etc/hosts` or kill the block server.
+
 ## Limitations
 
-Multi-container tasks require the **docker** environment provider because they rely on Docker Compose networking. They are not supported on cloud providers (Daytona, Modal, E2B, etc.).
+This approach is not airtight. A sophisticated agent could bypass `/etc/hosts` by using raw DNS queries or DNS-over-HTTPS to resolve blocked domains directly.
+

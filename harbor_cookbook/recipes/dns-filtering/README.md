@@ -1,11 +1,11 @@
-# sidecar-dns
+# dns-filtering
 
 Domain blacklisting via `/etc/hosts` and a block-page HTTP server. The agent runs as a non-root user and must figure out which domains are reachable.
 
 ## Structure
 
 ```
-sidecar-dns/
+dns-filtering/
 ├── task.toml
 ├── instruction.md
 ├── environment/
@@ -22,7 +22,7 @@ sidecar-dns/
 ## Run
 
 ```bash
-harbor run -p harbor_cookbook/recipes/sidecar-dns --agent claude-code --model anthropic/claude-sonnet-4-6
+harbor run -p harbor_cookbook/recipes/dns-filtering --agent claude-code --model anthropic/claude-sonnet-4-6
 ```
 
 

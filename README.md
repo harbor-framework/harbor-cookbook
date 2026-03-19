@@ -31,3 +31,10 @@ harbor run -p harbor_cookbook/recipes/<name> -a claude-code -m anthropic/claude-
 | [multi&#8209;reward](harbor_cookbook/recipes/multi-reward/) | Multiple verifiers that grade independently and write separate rewards to `reward.json`. |
 
 See each recipe's README for structure and details.
+
+## Optimization Examples
+
+| Name | Description |
+|:--|:--|
+| [gepa](harbor_cookbook/gepa/) | Discover medical agent architectures with GEPA, evaluated by Harbor on MedAgentBench. |
+| [tinker&#8209;rl](harbor_cookbook/tinker_rl/) | RL training on Harbor tasks using the Tinker SDK. |

@@ -1,6 +1,6 @@
 # dns-blacklisting
 
-Domain blacklisting via `/etc/hosts` and a block-page HTTP server. The agent runs as a non-root user and must figure out which domains are reachable.
+Domain blacklisting via `/etc/hosts` and a block-page HTTP server. The agent must figure out which domains are reachable.
 
 ## Structure
 
@@ -11,6 +11,7 @@ dns-blacklisting/
 ├── environment/
 │   ├── Dockerfile
 │   ├── entrypoint.sh
+│   ├── blocked-domains.txt
 │   └── block-server.py
 ├── tests/
 │   ├── test.sh
@@ -28,9 +29,8 @@ harbor run -p harbor_cookbook/recipes/dns-blacklisting --agent claude-code --mod
 
 ## How it works
 
-The entrypoint runs as root and adds blocked domains to `/etc/hosts`, pointing them to `127.0.0.1`. A small Python HTTP server on port 80 returns a 403 "ACCESS DENIED" for any request to a blocked domain. The agent runs as a non-root user via `gosu` and cannot modify `/etc/hosts` or kill the block server.
+The entrypoint reads `blocked-domains.txt` and adds those domains to `/etc/hosts`, pointing them to `127.0.0.1`. A small Python HTTP server on port 80 returns a 403 "ACCESS DENIED" for any request to a blocked domain.
 
 ## Limitations
 
-This approach is not airtight. A sophisticated agent could bypass `/etc/hosts` by using raw DNS queries or DNS-over-HTTPS to resolve blocked domains directly.
-
+This approach is not airtight. An agent could bypass `/etc/hosts` by using raw DNS queries or DNS-over-HTTPS to resolve blocked domains directly. Or overwrite the `/etc/hosts` to disable the blocker. We check for this in the `test.sh`.

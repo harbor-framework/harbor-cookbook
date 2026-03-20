@@ -2,10 +2,11 @@
 set -e
 
 # Block domains via /etc/hosts
-for domain in google.com wikipedia.org; do
+while IFS= read -r domain || [ -n "$domain" ]; do
+  [ -z "$domain" ] && continue
   echo "127.0.0.1 $domain" >> /etc/hosts
   echo "127.0.0.1 www.$domain" >> /etc/hosts
-done
+done < /etc/blocked-domains.txt
 
 # Block server on port 80
 python3 /usr/local/bin/block-server.py &
@@ -13,4 +14,4 @@ python3 /usr/local/bin/block-server.py &
 mkdir -p /logs/verifier
 chmod 777 /logs /logs/verifier
 
-exec gosu agent "$@"
+exec "$@"

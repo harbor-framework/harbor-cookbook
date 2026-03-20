@@ -33,5 +33,4 @@ The entrypoint reads `blocked-domains.txt` and adds those domains to `/etc/hosts
 
 ## Limitations
 
-This approach is not airtight. A sophisticated agent could bypass `/etc/hosts` by using raw DNS queries or DNS-over-HTTPS to resolve blocked domains directly.
-
+This approach is not airtight. An agent could bypass `/etc/hosts` by using raw DNS queries or DNS-over-HTTPS to resolve blocked domains directly. Or overwrite the `/etc/hosts` to disable the blocker. We check for this in the `test.sh`.

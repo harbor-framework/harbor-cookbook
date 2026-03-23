@@ -1,6 +1,6 @@
 # dns-blacklisting
 
-Domain blacklisting via `/etc/hosts` and a block-page HTTP server. The agent must figure out which domains are reachable.
+Pattern-based hostname blacklisting via a local HTTP gateway. The agent must figure out which domains are reachable when exact, wildcard, and regex rules are in play.
 
 ## Structure
 
@@ -11,7 +11,8 @@ dns-blacklisting/
 ├── environment/
 │   ├── Dockerfile
 │   ├── entrypoint.sh
-│   ├── blocked-domains.txt
+│   ├── blacklist-patterns.txt
+│   ├── candidate-domains.txt
 │   └── block-server.py
 ├── tests/
 │   ├── test.sh
@@ -29,8 +30,14 @@ harbor run -p harbor_cookbook/recipes/dns-blacklisting --agent claude-code --mod
 
 ## How it works
 
-The entrypoint reads `blocked-domains.txt` and adds those domains to `/etc/hosts`, pointing them to `127.0.0.1`. A small Python HTTP server on port 80 returns a 403 "ACCESS DENIED" for any request to a blocked domain.
+The entrypoint routes the task's candidate domains to `127.0.0.1` so every request hits a local Python HTTP server. That server inspects the request `Host` header and decides whether to return `200 OK` or `403 ACCESS DENIED` based on rules loaded from `blacklist-patterns.txt`.
+
+Supported pattern formats:
+
+- `google.com` for an exact hostname match
+- `*.python.org` for wildcard subdomain matches
+- `regex:^shop-[0-9]+\.example\.net$` for regular-expression matches
 
 ## Limitations
 
-This approach is not airtight. An agent could bypass `/etc/hosts` by using raw DNS queries or DNS-over-HTTPS to resolve blocked domains directly. Or overwrite the `/etc/hosts` to disable the blocker. We check for this in the `test.sh`.
+This is still a teaching recipe, not a hardened network control. An agent could inspect or modify the seeded files, or bypass the recipe's routing setup entirely. The verifier therefore checks the final runtime behavior of the candidate domains rather than trusting the seed files alone.

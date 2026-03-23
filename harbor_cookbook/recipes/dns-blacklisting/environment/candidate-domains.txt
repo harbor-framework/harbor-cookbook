@@ -1,0 +1,6 @@
+example.com
+google.com
+python.org
+docs.python.org
+shop-42.example.net
+shop.example.net

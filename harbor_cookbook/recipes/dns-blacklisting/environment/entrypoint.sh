@@ -1,12 +1,14 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
-# Block domains via /etc/hosts
+# Route all task domains to the local matcher.
 while IFS= read -r domain || [ -n "$domain" ]; do
+  domain="${domain%%#*}"
+  domain="${domain#"${domain%%[![:space:]]*}"}"
+  domain="${domain%"${domain##*[![:space:]]}"}"
   [ -z "$domain" ] && continue
   echo "127.0.0.1 $domain" >> /etc/hosts
-  echo "127.0.0.1 www.$domain" >> /etc/hosts
-done < /etc/blocked-domains.txt
+done < /etc/candidate-domains.txt
 
 # Block server on port 80
 python3 /usr/local/bin/block-server.py &

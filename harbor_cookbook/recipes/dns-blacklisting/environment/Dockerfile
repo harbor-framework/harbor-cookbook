@@ -8,7 +8,8 @@ RUN apt-get update && apt-get install -y \
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-COPY blocked-domains.txt /etc/blocked-domains.txt
+COPY blacklist-patterns.txt /etc/blacklist-patterns.txt
+COPY candidate-domains.txt /etc/candidate-domains.txt
 COPY block-server.py /usr/local/bin/block-server.py
 
 ENTRYPOINT ["/entrypoint.sh"]

@@ -28,7 +28,7 @@
     },
     {
       "name": "dns-blacklisting",
-      "description": "Domain blacklisting via /etc/hosts and a block-page HTTP server with non-root user isolation.",
+      "description": "Pattern-based hostname blacklisting via a local HTTP gateway with exact, wildcard, and regex rules.",
       "path": "recipes/dns-blacklisting"
     },
     {

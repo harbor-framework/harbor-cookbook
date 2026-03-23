@@ -1,0 +1,8 @@
+# Exact hostname match
+google.com
+
+# Wildcard subdomain match
+*.python.org
+
+# Regex hostname match
+regex:^shop-[0-9]+\.example\.net$

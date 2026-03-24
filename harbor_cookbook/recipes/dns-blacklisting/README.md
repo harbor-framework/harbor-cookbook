@@ -40,4 +40,4 @@ Supported pattern formats:
 
 ## Limitations
 
-This is still a teaching recipe, not a hardened network control. An agent could inspect or modify the seeded files, or bypass the recipe's routing setup entirely. The verifier therefore checks the final runtime behavior of the candidate domains rather than trusting the seed files alone.
+The blacklisting is not airtight. An agent could inspect or modify the seeded files, or bypass the task's routing setup entirely. The access denied message should therefore communicate to the agent that the domain is not available in this environment so that the agent does not try to sidestep it. Also the grader in `tests/`  can do some checks whether the agent complied.

@@ -1,6 +1,6 @@
 # mcp-tools
 
-Giving agents access to custom MCP tools via a FastMCP server running in a companion container.
+Giving agents access to custom MCP tools via a FastMCP server running in a separate container.
 
 ## Structure
 
@@ -17,7 +17,7 @@ mcp-tools/
 │       └── server.py
 ├── tests/
 │   ├── test.sh                # Verifier entrypoint
-│   └── test_outputs.py        # Pytest assertions
+│   └── test_outputs.py        # Pytest tests
 └── solution/
     └── solve.sh               # Reference solution
 ```
@@ -38,4 +38,4 @@ harbor run -p harbor_cookbook/recipes/mcp-tools --agent claude-code --model anth
 
 ## Limitations
 
-Multi-container tasks require the **docker** environment provider because they rely on Docker Compose networking. They are not supported on cloud providers (Daytona, Modal, E2B, etc.).
+Multi-container tasks require the **docker** environment provider because they rely on Docker Compose networking. They are not supported on some of the cloud providers in Harbor (Modal, E2B, etc.).

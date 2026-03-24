@@ -1,6 +1,6 @@
 # simulated-user
 
-Example implementation of a task with a simulated user that the agent can ask questions.
+Example implementation of a task with a simulated user that the agent can interact with and ask questions.
 
 ## Structure
 
@@ -46,4 +46,4 @@ harbor run -p harbor_cookbook/recipes/simulated-user --agent claude-code --model
 
 ## Limitations
 
-Multi-container tasks require the **docker** environment provider because they rely on Docker Compose networking. They are not supported on cloud providers (Daytona, Modal, E2B, etc.).
+Multi-container tasks require the **docker** environment provider because they rely on Docker Compose networking. They are not supported on some of the cloud providers in Harbor (Modal, E2B, etc.).

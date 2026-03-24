@@ -27,31 +27,13 @@ logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
 SCREENSHOT_PATH = "/tmp/screenshot.png"
-# Working directory on the Windows sandbox — %USERPROFILE% is reliably
-# writable while bare C:\ paths may not be.
-WIN_WORK_DIR = "%USERPROFILE%\\harbor"
+WIN_APP_DIR = "C:/Users/Administrator/harbor"
 
 # ---------------------------------------------------------------------------
 # Sandbox lifecycle
 # ---------------------------------------------------------------------------
 
 sandbox = None  # set below if Daytona is reachable
-
-
-def _win_run_py(code: str, timeout: int = 30):
-    """Execute arbitrary Python on the Windows sandbox.
-
-    Avoids cmd.exe quoting issues by writing a base64-encoded runner
-    script via ``echo`` and then executing it.
-    """
-    encoded = base64.b64encode(code.encode()).decode()
-    sandbox.process.exec(f"echo import base64 > {WIN_WORK_DIR}\\__run.py", timeout=5)
-    sandbox.process.exec(
-        f"echo exec(base64.b64decode('{encoded}').decode()) "
-        f">> {WIN_WORK_DIR}\\__run.py",
-        timeout=5,
-    )
-    return sandbox.process.exec(f"python {WIN_WORK_DIR}\\__run.py", timeout=timeout)
 
 
 def _setup_sandbox():
@@ -85,44 +67,37 @@ def _setup_sandbox():
 
     atexit.register(_cleanup)
 
-    # Start computer-use processes (may already be running on Windows snapshots)
     try:
         sandbox.computer_use.start()
         log.info("computer_use.start() succeeded")
     except Exception as exc:
         log.info("computer_use.start() skipped: %s", exc)
 
-    # Create working directory
-    sandbox.process.exec(f"mkdir {WIN_WORK_DIR}", timeout=5)
-    sandbox.process.exec("mkdir %USERPROFILE%\\app", timeout=5)
+    # Create working directory and deploy the challenge app
+    sandbox.process.exec(r"mkdir C:\Users\Administrator\harbor", timeout=5)
 
-    # Deploy the challenge application via base64
     log.info("Deploying challenge app …")
     with open(os.path.join(os.path.dirname(__file__) or ".", "challenge.py")) as f:
         challenge_source = f.read()
 
-    challenge_b64 = base64.b64encode(challenge_source.encode()).decode()
-    deploy_code = (
-        "import base64, os\n"
-        f"src = base64.b64decode('{challenge_b64}').decode()\n"
-        "path = os.path.expanduser(r'~\\harbor\\challenge.py')\n"
-        "open(path, 'w').write(src)\n"
-        "print('deployed')\n"
-    )
-    r = _win_run_py(deploy_code)
-    log.info("Deploy result: %s", r.result)
+    sandbox.fs.upload_file(challenge_source.encode(), f"{WIN_APP_DIR}/challenge.py")
 
-    # Launch the challenge GUI in a detached process
-    log.info("Launching challenge app on desktop …")
-    launch_code = (
-        "import subprocess, os\n"
+    # Upload a small launcher that starts the GUI in a detached process
+    launcher = (
+        "import subprocess\n"
         "subprocess.Popen(\n"
-        "    ['python', os.path.expanduser(r'~\\harbor\\challenge.py')],\n"
+        r"    ['python', r'C:\Users\Administrator\harbor\challenge.py'],"
+        "\n"
         "    creationflags=0x00000008,\n"
         ")\n"
         "print('launched')\n"
     )
-    r = _win_run_py(launch_code, timeout=15)
+    sandbox.fs.upload_file(launcher.encode(), f"{WIN_APP_DIR}/launch.py")
+
+    log.info("Launching challenge app on desktop …")
+    r = sandbox.process.exec(
+        r"python C:\Users\Administrator\harbor\launch.py", timeout=15
+    )
     log.info("Launch result: %s", r.result)
     time.sleep(5)
 
@@ -133,7 +108,9 @@ def _setup_sandbox():
         log.info("Open windows: %s", titles)
         if not any("Harbor" in t for t in titles):
             log.warning("Challenge window not found, retrying …")
-            _win_run_py(launch_code, timeout=15)
+            sandbox.process.exec(
+                r"python C:\Users\Administrator\harbor\launch.py", timeout=15
+            )
             time.sleep(5)
     except Exception as exc:
         log.warning("Could not verify window list: %s", exc)

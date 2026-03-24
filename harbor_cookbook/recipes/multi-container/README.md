@@ -36,4 +36,4 @@ harbor run -p harbor_cookbook/recipes/multi-container --agent claude-code --mode
 
 ## Limitations
 
-Multi-container tasks require the **docker** environment provider because they rely on Docker Compose networking. They are not supported on cloud providers (Daytona, Modal, E2B, etc.).
+Multi-container tasks require the **docker** environment provider because they rely on Docker Compose networking. They are not supported on some of the cloud providers in Harbor (Modal, E2B, etc.).

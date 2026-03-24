@@ -4,7 +4,7 @@
 # ///
 """GEPA prompt optimization for MedAgentBench.
 
-Evolves a prompt template that wraps each task's instruction.md via
+Evolves the agent prompt template that wraps each task's instruction.md via
 Harbor's prompt_template_path mechanism.  Evaluated by running a coding
 agent (codex by default) on medagentbench@1.0 Harbor Trials.
 """
@@ -40,16 +40,15 @@ final step.
 """
 
 OBJECTIVE = (
-    "Optimize a prompt template that wraps MedAgentBench task instructions. "
+    "Optimize a prompt template that wraps medical task instructions. "
     "The prompt guides a coding agent on how to query a FHIR server and "
     "answer clinical EHR questions. "
-    "Graded by the official MedAgentBench verifier (binary: 1=correct, 0=wrong)."
 )
 
 BACKGROUND = (
-    "MedAgentBench tasks span 10 categories: patient lookup, lab results, "
+    "The medical tasks span 10 categories: patient lookup, lab results, "
     "vitals, medications, conditions, procedures, service requests, and "
-    "clinical reasoning. Each task runs in a Docker container with a FHIR "
+    "clinical reasoning. Each task runs with a FHIR "
     "server at http://localhost:8080/fhir/.\n\n"
     "The agent receives the task's instruction.md wrapped by the prompt "
     "template being optimized. The agent must query the FHIR server "

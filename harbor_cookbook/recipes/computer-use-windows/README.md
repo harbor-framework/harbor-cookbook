@@ -1,8 +1,8 @@
 # computer-use-windows
 
-Computer-use task on a remote Windows desktop. A companion MCP server creates a [Daytona](https://daytona.io) Windows sandbox, deploys a multi-step tkinter challenge, and proxies computer-use tools (screenshot, click, type) to the agent. Same tool set as `computer-use-ubuntu`, backed by the Daytona Computer Use API.
+Computer-use task on a remote Windows desktop. A MCP server creates a [Daytona](https://daytona.io) Windows sandbox, deploys a multi-step tkinter challenge, and exposes computer-use tools (screenshot, click, type) to the agent. The tool set mirrors the [Anthropic computer-use demo](https://github.com/anthropics/claude-quickstarts/tree/main/computer-use-demo).
 
-> **Note:** Daytona Windows Computer Use is currently in early preview. Access requires a beta account at [win.trydaytona.com](https://win.trydaytona.com/) with the `windows-base` snapshot available.
+> **Note:** Daytona Windows Computer Use is currently in early preview. Access requires a beta account at [win.trydaytona.com](https://win.trydaytona.com/) with the `windows-base` snapshot available. [More info](https://www.daytona.io/docs/en/computer-use/)
 
 ## Run
 
@@ -17,8 +17,3 @@ Your `.env` needs:
 DAYTONA_API_KEY=your_key_here
 DAYTONA_API_URL=https://win.trydaytona.com/api
 ```
-
-## Limitations
-
-- Requires internet access (MCP server connects to the Daytona API)
-- Windows sandbox takes ~30-60s to start after creation

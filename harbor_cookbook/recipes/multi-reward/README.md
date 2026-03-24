@@ -24,16 +24,14 @@ multi-reward/
 
 ## Run
 
-```bash
-harbor trials start -p harbor_cookbook/recipes/multi-reward
-```
-
-## Metrics note
-
-Harbor's default `mean` metric only supports single-key `reward.json`. Since this recipe writes two keys (`correctness`, `performance`), running `harbor run` requires a custom metric config:
+This recipe writes two reward dimensions (`correctness`, `performance`) to `reward.json`. Harbor's default `mean` metric only supports single-key rewards, so you must pass the included `config.yaml` which uses a custom per-dimension metric:
 
 ```bash
 harbor run -p harbor_cookbook/recipes/multi-reward -c harbor_cookbook/recipes/multi-reward/config.yaml
 ```
 
-The included `config.yaml` uses a `uv-script` metric (`metrics/per_dimension.py`) that computes mean reward per dimension.
+To run a single trial without metrics (useful for quick iteration):
+
+```bash
+harbor trials start -p harbor_cookbook/recipes/multi-reward
+```

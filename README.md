@@ -1,5 +1,6 @@
 # Harbor Cookbook
 
+ [![](https://dcbadge.limes.pink/api/server/https://discord.gg/6xWPKhGDbA)](https://discord.gg/6xWPKhGDbA)
 [![Docs](https://img.shields.io/badge/Docs-000000?style=for-the-badge&logo=mdbook&color=105864)](https://harborframework.com/docs)
 
 Realistic examples of building evals and optimizing agents using [Harbor](https://github.com/harbor-framework/harbor). 

@@ -38,7 +38,7 @@
     },
     {
       "name": "computer-use-windows",
-      "description": "Computer-use task on a Windows virtual desktop requiring genuine GUI interaction via CUA agents.",
+      "description": "Computer-use task on a remote Daytona Windows desktop requiring genuine GUI interaction via MCP tools.",
       "path": "recipes/computer-use-windows"
     }
   ]

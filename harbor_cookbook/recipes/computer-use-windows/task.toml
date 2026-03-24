@@ -7,9 +7,17 @@ timeout_sec = 600.0
 timeout_sec = 600.0
 
 [environment]
-build_timeout_sec = 1800.0
-cpus = 4
-memory_mb = 8192
-storage_mb = 65536
+build_timeout_sec = 600.0
+cpus = 1
+memory_mb = 2048
+storage_mb = 10240
 allow_internet = true
-os_type = "windows"
+
+[environment.env]
+DAYTONA_API_KEY = "${DAYTONA_API_KEY}"
+DAYTONA_API_URL = "${DAYTONA_API_URL:-https://win.trydaytona.com/api}"
+
+[[environment.mcp_servers]]
+name = "desktop"
+transport = "streamable-http"
+url = "http://desktop:8000/mcp"

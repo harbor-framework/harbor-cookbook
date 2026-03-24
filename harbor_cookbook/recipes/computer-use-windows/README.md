@@ -1,42 +1,24 @@
 # computer-use-windows
 
-Computer-use task where an agent interacts with a Windows virtual desktop to solve a multi-step GUI challenge. Requires the [Mascobot/harbor fork](https://github.com/Mascobot/harbor) which adds Windows desktop support via Daytona.
+Computer-use task on a remote Windows desktop. A companion MCP server creates a [Daytona](https://daytona.io) Windows sandbox, deploys a multi-step tkinter challenge, and proxies computer-use tools (screenshot, click, type) to the agent. Same tool set as `computer-use-ubuntu`, backed by the Daytona Computer Use API.
 
-## How it works
-
-Harbor creates a Daytona sandbox from a pre-built Windows snapshot (`windows-base`). A setup script deploys a tkinter challenge application and launches it on the desktop. CUA agents (anthropic-cua, openai-cua) interact with the Windows desktop through Harbor's `DaytonaWindowsDesktopInterface`, which executes pyautogui commands on the sandbox via the Daytona SDK.
-
-The challenge presents a multi-step GUI task requiring the agent to click buttons, type text, and read the result from the screen. The task cannot be solved without genuine GUI interaction.
-
-## Prerequisites
-
-- [Mascobot/harbor fork](https://github.com/Mascobot/harbor) (not upstream harbor-framework/harbor)
-- Daytona API key (`DAYTONA_API_KEY`)
-- `windows-base` snapshot in your Daytona account (Windows Computer Use private alpha)
-- Anthropic or OpenAI API key for the CUA agent
+> **Note:** Daytona Windows Computer Use is currently in early preview. Access requires a beta account at [win.trydaytona.com](https://win.trydaytona.com/) with the `windows-base` snapshot available.
 
 ## Run
 
 ```bash
 harbor run -p harbor_cookbook/recipes/computer-use-windows \
-  --agent anthropic-cua --model anthropic/claude-sonnet-4-6 \
-  --environment-type daytona \
-  --environment-kwarg windows_snapshot=windows-base \
-  --environment-kwarg windows_setup_script=harbor_cookbook/recipes/computer-use-windows/scripts/setup.py \
-  --environment-kwarg skip_osworld_setup=true
+  --agent claude-code --model anthropic/claude-sonnet-4-6 \
+  --env-file .env -y
 ```
 
-## Docker oracle test
-
-The oracle test validates the test/solution pipeline on Docker (no Windows desktop needed):
-
-```bash
-harbor trials start -p harbor_cookbook/recipes/computer-use-windows --agent oracle
+Your `.env` needs:
+```
+DAYTONA_API_KEY=your_key_here
+DAYTONA_API_URL=https://win.trydaytona.com/api
 ```
 
 ## Limitations
 
-- Requires the Mascobot/harbor fork with CUA agent and Windows desktop support
-- Requires the `daytona` environment provider with a Windows snapshot
-- Windows Computer Use is currently in Daytona private alpha
-- Standard agents (claude-code, codex) cannot interact with the desktop — use CUA agents
+- Requires internet access (MCP server connects to the Daytona API)
+- Windows sandbox takes ~30-60s to start after creation

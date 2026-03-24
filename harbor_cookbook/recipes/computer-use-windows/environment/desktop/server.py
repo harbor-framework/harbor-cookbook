@@ -26,14 +26,9 @@ from fastmcp.utilities.types import Image
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
-SCREENSHOT_PATH = "/tmp/screenshot.png"
 WIN_APP_DIR = "C:/Users/Administrator/harbor"
 
-# ---------------------------------------------------------------------------
-# Sandbox lifecycle
-# ---------------------------------------------------------------------------
-
-sandbox = None  # set below if Daytona is reachable
+sandbox = None
 
 
 def _setup_sandbox():
@@ -73,8 +68,7 @@ def _setup_sandbox():
     except Exception as exc:
         log.info("computer_use.start() skipped: %s", exc)
 
-    # Create working directory and deploy the challenge app
-    sandbox.process.exec(r"mkdir C:\Users\Administrator\harbor", timeout=5)
+    sandbox.process.exec(f"mkdir {WIN_APP_DIR}", timeout=5)
 
     log.info("Deploying challenge app …")
     with open(os.path.join(os.path.dirname(__file__) or ".", "challenge.py")) as f:
@@ -82,12 +76,11 @@ def _setup_sandbox():
 
     sandbox.fs.upload_file(challenge_source.encode(), f"{WIN_APP_DIR}/challenge.py")
 
-    # Upload a small launcher that starts the GUI in a detached process
+    # DETACHED_PROCESS flag so the GUI outlives the launcher
     launcher = (
         "import subprocess\n"
         "subprocess.Popen(\n"
-        r"    ['python', r'C:\Users\Administrator\harbor\challenge.py'],"
-        "\n"
+        f"    ['python', r'{WIN_APP_DIR}/challenge.py'],\n"
         "    creationflags=0x00000008,\n"
         ")\n"
         "print('launched')\n"
@@ -95,22 +88,17 @@ def _setup_sandbox():
     sandbox.fs.upload_file(launcher.encode(), f"{WIN_APP_DIR}/launch.py")
 
     log.info("Launching challenge app on desktop …")
-    r = sandbox.process.exec(
-        r"python C:\Users\Administrator\harbor\launch.py", timeout=15
-    )
+    r = sandbox.process.exec(f"python {WIN_APP_DIR}/launch.py", timeout=15)
     log.info("Launch result: %s", r.result)
     time.sleep(5)
 
-    # Verify the app is running
     try:
         windows = sandbox.computer_use.display.get_windows()
         titles = [w.title for w in windows.windows] if windows.windows else []
         log.info("Open windows: %s", titles)
         if not any("Harbor" in t for t in titles):
             log.warning("Challenge window not found, retrying …")
-            sandbox.process.exec(
-                r"python C:\Users\Administrator\harbor\launch.py", timeout=15
-            )
+            sandbox.process.exec(f"python {WIN_APP_DIR}/launch.py", timeout=15)
             time.sleep(5)
     except Exception as exc:
         log.warning("Could not verify window list: %s", exc)
@@ -124,10 +112,6 @@ except Exception as exc:
     log.warning("Sandbox setup failed (tools will be unavailable): %s", exc)
 
 log.info("Starting MCP server (sandbox=%s)", "ready" if sandbox else "unavailable")
-
-# ---------------------------------------------------------------------------
-# MCP server
-# ---------------------------------------------------------------------------
 
 mcp = FastMCP("computer-use")
 
@@ -147,21 +131,12 @@ def requires_sandbox(fn):
     return wrapper
 
 
-# -- Screen capture --------------------------------------------------------
-
-
 @mcp.tool()
 @requires_sandbox
 def screenshot() -> Image:
     """Take a screenshot of the Windows desktop and return it as an image."""
     resp = sandbox.computer_use.screenshot.take_full_screen()
-    data = base64.b64decode(resp.screenshot)
-    with open(SCREENSHOT_PATH, "wb") as f:
-        f.write(data)
-    return Image(path=SCREENSHOT_PATH)
-
-
-# -- Mouse actions ---------------------------------------------------------
+    return Image(data=base64.b64decode(resp.screenshot), format="png")
 
 
 @mcp.tool()
@@ -238,9 +213,6 @@ def cursor_position() -> str:
     return f"Cursor position: ({pos.x}, {pos.y})"
 
 
-# -- Keyboard actions ------------------------------------------------------
-
-
 @mcp.tool()
 @requires_sandbox
 def type_text(text: str) -> str:
@@ -267,9 +239,6 @@ def hold_key(key: str, duration: float = 0.5) -> str:
     sandbox.computer_use.keyboard.press(key)
     time.sleep(duration)
     return f"Held {key} for {duration}s"
-
-
-# -- Utility ---------------------------------------------------------------
 
 
 @mcp.tool()

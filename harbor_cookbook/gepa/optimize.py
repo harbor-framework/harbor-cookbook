@@ -26,6 +26,7 @@ from utils import (
     DEFAULT_ENVIRONMENT,
     DEFAULT_MODEL,
     download_tasks,
+    init_queue,
     run_trial,
     split_tasks,
 )
@@ -172,6 +173,8 @@ def main():
     _agent_name = args.agent
     _model_name = args.model
     _environment = args.environment
+
+    init_queue(n_concurrent=args.max_workers)
 
     logging.basicConfig(
         level=logging.INFO,

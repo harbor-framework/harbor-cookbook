@@ -1,11 +1,9 @@
 """Utilities for downloading MedAgentBench tasks and running Harbor trials."""
 
-import asyncio
 import logging
 import os
 import shutil
 import tempfile
-import threading
 from collections import defaultdict
 from pathlib import Path
 
@@ -26,8 +24,6 @@ DEFAULT_AGENT = "codex"
 DEFAULT_MODEL = "openai/gpt-5-nano"
 DEFAULT_ENVIRONMENT = EnvironmentType.DOCKER
 
-_loop = asyncio.new_event_loop()
-threading.Thread(target=_loop.run_forever, daemon=True).start()
 _queue: TrialQueue | None = None
 
 
@@ -76,7 +72,7 @@ def _read_trial_file(trials_dir: Path, relative: str, limit: int = 3000) -> str:
     return ""
 
 
-def run_trial(
+async def run_trial(
     prompt: str,
     task_path: Path,
     agent_name: str = DEFAULT_AGENT,
@@ -111,7 +107,7 @@ def run_trial(
         )
 
         log.debug("Starting trial for %s", task_dir.name)
-        result = asyncio.run_coroutine_threadsafe(_queue.submit(config), _loop).result()
+        result = await _queue.submit(config)
 
         rewards = result.verifier_result.rewards if result.verifier_result else {}
         exc = result.exception_info

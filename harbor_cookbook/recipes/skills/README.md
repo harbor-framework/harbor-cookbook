@@ -23,11 +23,9 @@ skills/
 
 ## How it works
 
-The `skills_dir` key under `[environment]` in `task.toml` tells Harbor where to find skill definitions inside the container. At startup, Harbor copies every subdirectory from that path into the agent's native skills directory (e.g. `~/.claude/skills/` for Claude Code).
+The `skills_dir` key under `[environment]` in `task.toml` tells Harbor where to find skill definitions inside the `environment/` specification. At startup, Harbor copies every subdirectory from that path into the agent's native skills directory (e.g. `~/.claude/skills/` for Claude Code).
 
-Each skill is a subdirectory containing a `SKILL.md` file with YAML frontmatter (`name`, `description`) followed by Markdown instructions. The agent discovers and invokes these skills like any other built-in skill.
-
-The Dockerfile copies the local `skills/` directory into the container at `/skills`, and `task.toml` sets `skills_dir = "/skills"` so Harbor knows to pick them up.
+Each skill is a subdirectory containing a `SKILL.md` file as per the official [Skills spec](https://agentskills.io/specification).
 
 ## Run
 

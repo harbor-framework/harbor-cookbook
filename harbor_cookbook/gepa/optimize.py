@@ -1,5 +1,5 @@
 # /// script
-# dependencies = ["harbor", "gepa"]
+# dependencies = ["harbor", "gepa @ git+https://github.com/gepa-ai/gepa.git@feat/async-evaluator-support"]
 # requires-python = ">=3.12"
 # ///
 """GEPA prompt optimization for MedAgentBench.
@@ -65,12 +65,12 @@ _model_name: str = DEFAULT_MODEL
 _environment: str = DEFAULT_ENVIRONMENT
 
 
-def evaluate(candidate, example):
+async def evaluate(candidate, example):
     """Run one Harbor trial and return (score, side_info)."""
     task_id = example.id.name
     log.info("Evaluating %s ...", task_id)
 
-    result = run_trial(
+    result = await run_trial(
         candidate,
         example.downloaded_path,
         agent_name=_agent_name,
@@ -205,7 +205,6 @@ def main():
             engine=EngineConfig(
                 max_metric_calls=args.max_evals,
                 max_candidate_proposals=args.max_iterations,
-                max_workers=args.max_workers,
                 run_dir=args.output_dir,
             ),
             reflection=ReflectionConfig(

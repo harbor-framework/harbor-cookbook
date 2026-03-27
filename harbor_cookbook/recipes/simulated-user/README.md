@@ -27,7 +27,7 @@ simulated-user/
 
 The MCP server (`environment/user-server/server.py`) exposes a single `ask_user` tool. A persona file (`persona.md`) defines who the simulated user is.
 
-The agent doesn't know what to build upfront; it must call `ask_user` to discover requirements, then implement the solution. Tests verify both the correct output and that the agent actually used the tool.
+The agent doesn't know what to build upfront; it must call `ask_user` to discover requirements, then implement the solution. Tests verify the correct output.
 
 To create a new task with a different simulated user, copy the recipe and swap `persona.md` — `server.py` stays identical.
 

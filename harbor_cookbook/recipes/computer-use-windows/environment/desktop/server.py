@@ -232,13 +232,17 @@ def press_key(key: str) -> str:
     return f"Pressed: {key}"
 
 
-@mcp.tool()
-@requires_sandbox
-def hold_key(key: str, duration: float = 0.5) -> str:
-    """Hold a key down for the given duration in seconds."""
-    sandbox.computer_use.keyboard.press(key)
-    time.sleep(duration)
-    return f"Held {key} for {duration}s"
+# hold_key is disabled: the Daytona keyboard API only has press() (full
+# press+release) with no separate keydown/keyup, so the key is never truly
+# held down.  Re-enable if Daytona adds keydown/keyup support.
+#
+# @mcp.tool()
+# @requires_sandbox
+# def hold_key(key: str, duration: float = 0.5) -> str:
+#     """Hold a key down for the given duration in seconds."""
+#     sandbox.computer_use.keyboard.press(key)
+#     time.sleep(duration)
+#     return f"Held {key} for {duration}s"
 
 
 @mcp.tool()

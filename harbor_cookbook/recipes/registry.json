@@ -40,6 +40,11 @@
       "name": "computer-use-windows",
       "description": "Computer-use task on a remote Daytona Windows desktop requiring genuine GUI interaction via MCP tools.",
       "path": "recipes/computer-use-windows"
+    },
+    {
+      "name": "skills",
+      "description": "Giving agents access to custom skills via the skills_dir setting in task.toml.",
+      "path": "recipes/skills"
     }
   ]
 }

@@ -126,8 +126,7 @@ class HarborDataset(RLDataset):
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--model", default="moonshotai/Kimi-K2-Thinking")
-    p.add_argument("--dataset", default="terminal-bench")
-    p.add_argument("--version", default="2.0")
+    p.add_argument("--dataset", default="terminal-bench@2.0")
     p.add_argument("--group-size", type=int, default=4)
     p.add_argument("--batch-size", type=int, default=8)
     p.add_argument("--lr", type=float, default=1e-5)
@@ -142,10 +141,8 @@ def main():
         level=logging.INFO, format="%(asctime)s %(levelname)-8s %(message)s"
     )
 
-    log.info("Loading %s@%s ...", args.dataset, args.version)
-    items = RegistryClientFactory.create().download_dataset(
-        args.dataset, version=args.version
-    )
+    log.info("Loading %s ...", args.dataset)
+    items = asyncio.run(RegistryClientFactory.create().download_dataset(args.dataset))
     task_paths = [item.downloaded_path for item in items]
     log.info("Found %d tasks", len(task_paths))
 

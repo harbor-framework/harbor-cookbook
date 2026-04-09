@@ -125,10 +125,10 @@ class HarborDataset(RLDataset):
 
 def main():
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument("--model", default="moonshotai/Kimi-K2-Thinking")
-    p.add_argument("--dataset", default="terminal-bench@2.0")
+    p.add_argument("-m", "--model", default="moonshotai/Kimi-K2-Thinking")
+    p.add_argument("-d", "--dataset", default="terminal-bench@2.0")
     p.add_argument("--group-size", type=int, default=4)
-    p.add_argument("--batch-size", type=int, default=8)
+    p.add_argument("-b", "--batch-size", type=int, default=8)
     p.add_argument("--lr", type=float, default=1e-5)
     p.add_argument("--lora-rank", type=int, default=32)
     p.add_argument("--max-tokens", type=int, default=8192)
@@ -146,7 +146,7 @@ def main():
     task_paths = [item.downloaded_path for item in items]
     log.info("Found %d tasks", len(task_paths))
 
-    def build_datasets():
+    async def build_datasets():
         builders = [
             HarborEnvGroupBuilder(
                 p, args.model, args.group_size, args.max_turns, args.sandbox

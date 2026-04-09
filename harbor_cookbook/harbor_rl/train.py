@@ -1,5 +1,8 @@
 # /// script
-# dependencies = ["harbor[rl]", "tinker-cookbook"]
+# dependencies = [
+#     "harbor[rl] @ git+https://github.com/harbor-framework/harbor.git@feature/harbor-rl-4d0",
+#     "tinker-cookbook",
+# ]
 # requires-python = ">=3.12"
 # ///
 

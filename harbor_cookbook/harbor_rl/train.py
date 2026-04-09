@@ -129,7 +129,7 @@ def main():
     p.add_argument("--lora-rank", type=int, default=32)
     p.add_argument("--max-tokens", type=int, default=8192)
     p.add_argument("--max-turns", type=int, default=10)
-    p.add_argument("--sandbox", default="modal")
+    p.add_argument("-s", "--sandbox", default="modal")
     p.add_argument("--log-path", default="logs/")
     args = p.parse_args()
 

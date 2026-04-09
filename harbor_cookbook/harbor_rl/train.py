@@ -9,11 +9,15 @@
 import argparse
 import asyncio
 import logging
+import tempfile
+import uuid
 from pathlib import Path
 from typing import Any, Sequence
 
-from harbor import SandboxFactory
+from harbor.environments.factory import SandboxFactory
+from harbor.models.environment_type import SandboxType
 from harbor.models.task.task import Task
+from harbor.models.trial.paths import TrialPaths
 from harbor.registry.client import RegistryClientFactory
 from harbor.rl import RLEnvironment, ToolInput
 from harbor.rl.tools import BashTool
@@ -80,8 +84,17 @@ class HarborEnvGroupBuilder(EnvGroupBuilder):
         renderer = get_renderer(renderer_name, tokenizer)
 
         envs: list[Env] = []
-        for _ in range(self.group_size):
-            sandbox = await SandboxFactory.create(task=task, type=self.sandbox_type)
+        for i in range(self.group_size):
+            session_id = uuid.uuid4().hex[:12]
+            trial_dir = Path(tempfile.mkdtemp(prefix=f"harbor-rl-{task.name}-{i}-"))
+            sandbox = SandboxFactory.create_sandbox(
+                type=SandboxType(self.sandbox_type),
+                environment_dir=task.paths.environment_dir,
+                environment_name=f"{task.name}-{i}",
+                session_id=session_id,
+                trial_paths=TrialPaths(trial_dir=trial_dir),
+                task_env_config=task.config.environment,
+            )
             rl_env = RLEnvironment(sandbox=sandbox, task=task)
             await rl_env.start(tools=[BashTool()])
             self._envs.append(rl_env)

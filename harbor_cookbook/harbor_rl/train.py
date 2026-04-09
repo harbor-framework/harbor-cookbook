@@ -18,12 +18,13 @@ from harbor.registry.client import RegistryClientFactory
 from harbor.rl import RLEnvironment, ToolInput
 from harbor.rl.tools import BashTool
 
-from tinker_cookbook import model_info, tokenizer_utils
+from tinker_cookbook.model_info import get_recommended_renderer_name
 from tinker_cookbook.renderers import get_renderer
+from tinker_cookbook.rl import Env, EnvGroupBuilder, RLDataset
 from tinker_cookbook.rl import train
-from tinker_cookbook.rl.env import Env, EnvGroupBuilder, RLDataset
-from tinker_cookbook.tool_use import build_agent_tool_env
-from tinker_cookbook.tool_use.tools import ToolResult, simple_tool_result, tool
+from tinker_cookbook.tokenizer_utils import get_tokenizer
+from tinker_cookbook.tool_use import build_agent_tool_env, simple_tool_result, tool
+from tinker_cookbook.tool_use.types import ToolResult
 
 log = logging.getLogger(__name__)
 
@@ -74,8 +75,8 @@ class HarborEnvGroupBuilder(EnvGroupBuilder):
 
     async def make_envs(self) -> Sequence[Env]:
         task = Task.from_dir(self.task_path)
-        renderer_name = model_info.get_recommended_renderer_name(self.model_name)
-        tokenizer = tokenizer_utils.get_tokenizer(self.model_name)
+        renderer_name = get_recommended_renderer_name(self.model_name)
+        tokenizer = get_tokenizer(self.model_name)
         renderer = get_renderer(renderer_name, tokenizer)
 
         envs: list[Env] = []
@@ -159,7 +160,7 @@ def main():
 
     config = train.Config(
         model_name=args.model,
-        renderer_name=model_info.get_recommended_renderer_name(args.model),
+        renderer_name=get_recommended_renderer_name(args.model),
         dataset_builder=build_datasets,
         learning_rate=args.lr,
         lora_rank=args.lora_rank,

@@ -54,12 +54,18 @@ def make_reward_fn(env: RLEnvironment):
 
 class HarborEnvGroupBuilder(EnvGroupBuilder):
     def __init__(
-        self, task_path: Path, model_name: str, group_size: int, max_turns: int = 10
+        self,
+        task_path: Path,
+        model_name: str,
+        group_size: int,
+        max_turns: int = 10,
+        sandbox_type: str = "modal",
     ):
         self.task_path = task_path
         self.model_name = model_name
         self.group_size = group_size
         self.max_turns = max_turns
+        self.sandbox_type = sandbox_type
         self._envs: list[RLEnvironment] = []
 
     async def make_envs(self) -> Sequence[Env]:
@@ -70,7 +76,7 @@ class HarborEnvGroupBuilder(EnvGroupBuilder):
 
         envs: list[Env] = []
         for _ in range(self.group_size):
-            sandbox = await SandboxFactory.create(task=task, type="docker")
+            sandbox = await SandboxFactory.create(task=task, type=self.sandbox_type)
             rl_env = RLEnvironment(sandbox=sandbox, task=task)
             await rl_env.start(tools=[BashTool()])
             self._envs.append(rl_env)
@@ -123,6 +129,7 @@ def main():
     p.add_argument("--lora-rank", type=int, default=32)
     p.add_argument("--max-tokens", type=int, default=8192)
     p.add_argument("--max-turns", type=int, default=10)
+    p.add_argument("--sandbox", default="modal")
     p.add_argument("--log-path", default="logs/")
     args = p.parse_args()
 
@@ -139,7 +146,9 @@ def main():
 
     def build_datasets():
         builders = [
-            HarborEnvGroupBuilder(p, args.model, args.group_size, args.max_turns)
+            HarborEnvGroupBuilder(
+                p, args.model, args.group_size, args.max_turns, args.sandbox
+            )
             for p in task_paths
         ]
         return HarborDataset(builders, args.batch_size), None

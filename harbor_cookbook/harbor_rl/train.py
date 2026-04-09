@@ -15,7 +15,8 @@ from typing import Any, Sequence
 from harbor import SandboxFactory
 from harbor.models.task.task import Task
 from harbor.registry.client import RegistryClientFactory
-from harbor.rl import BashTool, RLEnvironment, ToolInput
+from harbor.rl import RLEnvironment, ToolInput
+from harbor.rl.tools import BashTool
 
 from tinker_cookbook import model_info, tokenizer_utils
 from tinker_cookbook.renderers import get_renderer

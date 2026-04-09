@@ -45,6 +45,11 @@
       "name": "skills",
       "description": "Giving agents access to custom skills via the skills_dir setting in task.toml.",
       "path": "recipes/skills"
+    },
+    {
+      "name": "s3-mount",
+      "description": "Provisioning S3 data into an agent container at startup via an entrypoint and the AWS CLI.",
+      "path": "recipes/s3-mount"
     }
   ]
 }

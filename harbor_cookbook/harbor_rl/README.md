@@ -18,3 +18,4 @@ uv run harbor_cookbook/harbor_rl/train.py \
 ## Prerequisites
 
 - [Tinker](https://github.com/thinking-machines-lab/tinker) API key
+- Sandbox provider API key (e.g. [Modal](https://modal.com), [Daytona](https://daytona.io), [E2B](https://e2b.dev))

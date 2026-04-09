@@ -74,7 +74,7 @@ class HarborEnvGroupBuilder(EnvGroupBuilder):
         self._envs: list[RLEnvironment] = []
 
     async def make_envs(self) -> Sequence[Env]:
-        task = Task.from_dir(self.task_path)
+        task = Task(self.task_path)
         renderer_name = get_recommended_renderer_name(self.model_name)
         tokenizer = get_tokenizer(self.model_name)
         renderer = get_renderer(renderer_name, tokenizer)

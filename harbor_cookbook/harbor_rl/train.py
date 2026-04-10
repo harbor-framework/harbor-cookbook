@@ -52,7 +52,7 @@ def make_bash_tool(env: RLEnvironment, env_name: str):
         if is_err:
             log.info("[%s] bash error: %s", env_name, text[:200])
         else:
-            log.info("[%s] bash ok (%d chars)", env_name, len(text))
+            log.info("[%s] bash ok (%d chars)", env_name, len(text), text[:200])
         return simple_tool_result(text)
 
     return bash

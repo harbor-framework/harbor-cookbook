@@ -39,24 +39,33 @@ SYSTEM_PROMPT = (
 )
 
 
-def make_bash_tool(env: RLEnvironment):
+def make_bash_tool(env: RLEnvironment, env_name: str):
     @tool
     async def bash(command: str) -> ToolResult:
         """Execute a bash command in the sandbox."""
+        log.info("[%s] bash: %s", env_name, command)
         outputs = await env.step(
             [ToolInput(name="bash", arguments={"command": command})]
         )
-        return simple_tool_result("\n".join(c.text for c in outputs[0].content))
+        text = "\n".join(c.text for c in outputs[0].content)
+        is_err = outputs[0].isError
+        if is_err:
+            log.info("[%s] bash error: %s", env_name, text[:200])
+        else:
+            log.info("[%s] bash ok (%d chars)", env_name, len(text))
+        return simple_tool_result(text)
 
     return bash
 
 
-def make_reward_fn(env: RLEnvironment):
+def make_reward_fn(env: RLEnvironment, env_name: str):
     async def reward_fn(
         messages: list[dict[str, Any]],
     ) -> tuple[float, dict[str, float]]:
         result = await env.grade()
-        return result.rewards.get("reward", 0.0), result.rewards
+        reward = result.rewards.get("reward", 0.0)
+        log.info("[%s] grade: %s", env_name, result.rewards)
+        return reward, result.rewards
 
     return reward_fn
 
@@ -99,7 +108,9 @@ class HarborEnvGroupBuilder(EnvGroupBuilder):
             await rl_env.start(tools=[BashTool()])
             self._envs.append(rl_env)
 
-            bash = make_bash_tool(rl_env)
+            env_name = f"{task.name}/{i}"
+            log.info("[%s] sandbox started", env_name)
+            bash = make_bash_tool(rl_env, env_name)
             messages = renderer.create_conversation_prefix_with_tools(
                 tools=[bash.to_spec()], system_prompt=SYSTEM_PROMPT
             ) + [{"role": "user", "content": rl_env.get_prompt()}]
@@ -109,7 +120,7 @@ class HarborEnvGroupBuilder(EnvGroupBuilder):
                     renderer=renderer,
                     tools=[bash],
                     initial_messages=messages,
-                    reward_fn=make_reward_fn(rl_env),
+                    reward_fn=make_reward_fn(rl_env, env_name),
                     max_turns=self.max_turns,
                 )
             )

@@ -10,8 +10,9 @@ s3-mount/
 ├── task.toml              # Timeouts, resources, AWS env vars
 ├── instruction.md         # What the agent should do
 ├── environment/
-│   ├── Dockerfile         # Installs AWS CLI, sets entrypoint
-│   └── entrypoint.sh     # Downloads from S3 before agent starts
+│   ├── Dockerfile           # Installs AWS CLI, sets entrypoint
+│   ├── docker-compose.yaml  # Injects AWS env vars into the container
+│   └── entrypoint.sh       # Downloads from S3 before agent starts
 ├── tests/
 │   ├── test.sh            # Installs pytest, runs tests, writes reward
 │   └── test_solution.py   # Pytest assertions
@@ -23,7 +24,7 @@ s3-mount/
 
 The Dockerfile installs the AWS CLI and sets `entrypoint.sh` as the container's ENTRYPOINT. When the container starts, the entrypoint downloads the file at `$S3_DATA_URI` to `/app/data.txt`, then hands off to Harbor via `exec "$@"`. By the time the agent starts, the data is already on disk — the agent never interacts with S3 directly.
 
-AWS credentials and the S3 URI are passed through `[environment.env]` in `task.toml`, which resolves them from the host environment at runtime.
+AWS credentials and the S3 URI are declared in `[environment.env]` in `task.toml`, which resolves them from the host environment at runtime. The `docker-compose.yaml` explicitly lists these variables in its `environment:` section so they are injected into the container at creation time (Harbor's base compose config does not forward `[environment.env]` vars to the container process — only to `exec` calls).
 
 ## Setup
 

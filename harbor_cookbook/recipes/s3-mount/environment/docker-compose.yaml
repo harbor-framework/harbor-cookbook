@@ -1,0 +1,9 @@
+# This file is merged on top of Harbor's base docker-compose config.
+# It injects the AWS env vars into the main container so the
+# entrypoint can download from S3 before the agent starts.
+services:
+  main:
+    environment:
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
+      - S3_DATA_URI

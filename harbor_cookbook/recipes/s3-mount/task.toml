@@ -1,0 +1,18 @@
+version = "1.0"
+
+[verifier]
+timeout_sec = 120.0
+
+[agent]
+timeout_sec = 120.0
+
+[environment]
+build_timeout_sec = 600.0
+cpus = 1
+memory_mb = 2048
+storage_mb = 10240
+
+[environment.env]
+AWS_ACCESS_KEY_ID = "${AWS_ACCESS_KEY_ID}"
+AWS_SECRET_ACCESS_KEY = "${AWS_SECRET_ACCESS_KEY}"
+S3_DATA_URI = "${S3_DATA_URI:-s3://harbor-s3-example/numbers.txt}"

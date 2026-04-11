@@ -39,6 +39,6 @@ harbor run -p harbor_cookbook/recipes/<name> -a claude-code -m anthropic/claude-
 |:--|:--|
 | [harbor&#8209;rl](harbor_cookbook/harbor_rl/) | RL training on Harbor tasks using harbor.rl + Tinker. |
 | [gepa](harbor_cookbook/gepa/) | Agent harness optimization for MedAgentBench using Harbor+GEPA. |
-| [tinker&#8209;rl](harbor_cookbook/tinker_rl/) | RL training on Harbor tasks using the Tinker SDK. |
+| [tinker&#8209;rl](harbor_cookbook/tinker_rl/) | RL training on Harbor tasks using the Tinker Cookbook integration. |
 | [prime&#8209;rl](harbor_cookbook/prime_rl/) | RL training on Harbor tasks using Prime RL and Verifiers. |
 | [sky&#8209;rl](harbor_cookbook/sky_rl/) | RL training on Harbor tasks using SkyRL. |

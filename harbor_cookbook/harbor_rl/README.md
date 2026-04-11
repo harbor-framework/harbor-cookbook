@@ -7,8 +7,6 @@ RL training on Harbor tasks using the [harbor.rl](https://github.com/harbor-fram
 ## Quick start
 
 ```bash
-harbor datasets download terminal-bench@2.0
-
 uv run harbor_cookbook/harbor_rl/train.py \
     --model moonshotai/Kimi-K2-Thinking \
     --group-size 4 \

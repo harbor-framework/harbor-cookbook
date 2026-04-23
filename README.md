@@ -32,6 +32,7 @@ harbor run -p harbor_cookbook/recipes/<name> -a claude-code -m anthropic/claude-
 | [computer&#8209;use&#8209;windows](harbor_cookbook/recipes/computer-use-windows/) | Computer use reference implementation on a remote Windows desktop (Daytona). |
 | [dns&#8209;blacklisting](harbor_cookbook/recipes/dns-blacklisting/) | Network-level hostname blacklisting with exact, wildcard, and regex rules. |
 | [skills](harbor_cookbook/recipes/skills/) | Giving agents access to custom skills. |
+| [multi&#8209;step](harbor_cookbook/recipes/multi-step/) | Ordered multi-step task with per-step instructions, tests, workdir uploads, healthcheck, early stopping, and per-step artifacts. |
 
 ## Optimization Examples
 

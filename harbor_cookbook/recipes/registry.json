@@ -45,6 +45,11 @@
       "name": "skills",
       "description": "Giving agents access to custom skills via the skills_dir setting in task.toml.",
       "path": "recipes/skills"
+    },
+    {
+      "name": "multi-step",
+      "description": "Ordered multi-step task with per-step instructions, tests, workdir uploads, verifier env, healthcheck, min_reward early stopping, and artifact collection.",
+      "path": "recipes/multi-step"
     }
   ]
 }

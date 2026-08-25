@@ -1,5 +1,5 @@
 # /// script
-# dependencies = ["mosaic-sandbox[harbor]>=0.11.1"]
+# dependencies = ["mosaic-sandbox[harbor]>=0.12.0"]
 # requires-python = ">=3.12"
 # ///
 """Generate grouped Harbor rollouts with Mosaic or another provider."""

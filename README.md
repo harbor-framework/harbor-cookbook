@@ -25,6 +25,7 @@ harbor run -p harbor_cookbook/recipes/<name> -a claude-code -m anthropic/claude-
 |:--|:--|
 | [simple&#8209;task](harbor_cookbook/recipes/simple-task/) | Minimal single-container task. |
 | [multi&#8209;container](harbor_cookbook/recipes/multi-container/) | Docker Compose task where the agent interacts with a locally hosted REST API. |
+| [postgres&#8209;snapshot&#8209;regrade](harbor_cookbook/recipes/postgres-snapshot-regrade/) | Capture PostgreSQL state, grade it in a separate verifier, and regrade the saved snapshot. |
 | [mcp&#8209;tools](harbor_cookbook/recipes/mcp-tools/) | Giving the agent custom tools via a locally hosted FastMCP server. |
 | [multi&#8209;reward](harbor_cookbook/recipes/multi-reward/) | Multiple independent verifiers each producing their own score. |
 | [simulated&#8209;user](harbor_cookbook/recipes/simulated-user/) | Agent discovers requirements by talking to a simulated user. |

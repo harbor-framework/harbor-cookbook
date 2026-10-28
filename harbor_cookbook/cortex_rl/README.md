@@ -38,7 +38,7 @@ bash recipes/rl/harbor/run_qwen35_4b.sh trainer.max_training_steps=50
 
 ### Option A: Let your coding agent drive via the `cortex-training-rl` skill (Recommended)
 
-Install the **[`cortex-training-rl`](https://github.com/OpenHands/extensions/pull/771)** skill from `OpenHands/extensions` (or invoke `/cortex-training-rl` in OpenHands, Claude Code, or Cursor) and tell your agent what you want to train:
+Install the **[`cortex-training-rl`](https://github.com/OpenHands/extensions/tree/main/skills/cortex-training-rl)** skill from `OpenHands/extensions` (or invoke `/cortex-training-rl` in OpenHands, Claude Code, or Cursor) and tell your agent what you want to train:
 
 > *"Use `/cortex-training-rl` to post-train `Qwen/Qwen3-8B` on my Harbor tasks in `~/my-harbor-tasks/train` and `~/my-harbor-tasks/eval` with `HARBOR_SKILL=~/my-skill/SKILL.md`, `MAX_TURNS=15`, and `--env snowflake` for 50 steps."*
 

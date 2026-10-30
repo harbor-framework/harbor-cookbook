@@ -5,7 +5,7 @@ You have iterated on your agent harness (prompts, tools, `SKILL.md`), evaluated 
 With [Snowflake Cortex Training](https://github.com/Snowflake-AI-Research/Arctic-Platform/tree/main/recipes/rl/harbor), you do not rewrite your Harbor tasks, agent harness, or verifier into an RL-specific format. Every Harbor task directory (`instruction.md` + `environment/` + `tests/test.sh`) is **already** an online RL environment:
 
 - **Same agent & harness:** The exact agent (`--agent`), tools (`OPENHANDS_TOOLS`), system prompt (`OPENHANDS_SYSTEM_PROMPT_FILE`), and skills (`HARBOR_SKILL`) you evaluated in Harbor run during RL rollouts.
-- **Same sandboxes & verifiers:** Harbor's `Trial` and `Verifier` execute each rollout inside your chosen `--env` (`snowflake`, `docker`, `modal`, `daytona`, or `HostEnvironment`) and read `/logs/verifier/reward.txt` or `reward.json`.
+- **Same sandboxes & verifiers:** Harbor's `Trial` and `Verifier` execute each rollout inside your chosen `--env` ([`snowflake`](https://github.com/harbor-framework/harbor/tree/main/src/harbor/environments/snowflake), `docker`, `modal`, `daytona`, or `host` for trusted tasks) and read `/logs/verifier/reward.txt` or `reward.json`.
 - **Zero local GPUs needed:** Run from your laptop or a lightweight CPU driver box. Cortex Training provisions remote H200 GPUs for distributed vLLM rollout sampling and FSDP/Megatron GSPO/GRPO policy updates, splicing multi-turn trajectories automatically via a per-rollout OpenAI proxy (`loss_mask = 1` on assistant turns, `0` on prompts and tool outputs).
 
 This directory is a pointer. The full integration (`arctic_platform.integrations.harbor`) and recipe live in the Arctic Platform repo:
@@ -58,7 +58,7 @@ The skill knows the full [`recipes/rl/harbor/run_qwen35_4b.sh`](https://github.c
 | **Agent tools** | `OPENHANDS_TOOLS` | `terminal` | `terminal,file_editor,task_tracker` |
 | **Agent system prompt** | `OPENHANDS_SYSTEM_PROMPT_FILE` | built-in | `~/prompts/custom_agent.j2` |
 | **Harbor agent class** | `HARBOR_AGENT` | `OpenHandsHarborAgent` | `my_pkg:MyAgent` (a Harbor `BaseAgent` that runs on the driver; agents installed inside the environment are refused) |
-| **Harbor sandbox (`--env`)** | `HARBOR_ENV` | `HostEnvironment` | `snowflake`, `docker`, `modal`, `daytona`, `e2b` |
+| **Harbor sandbox (`--env`)** | `HARBOR_ENV` | [`snowflake`](https://github.com/harbor-framework/harbor/tree/main/src/harbor/environments/snowflake) | `docker`, `modal`, `daytona`, `e2b`, `host` (trusted tasks only) |
 | **Base model** | `MODEL` | `Qwen/Qwen3.5-4B` | `Qwen/Qwen3-8B`, `Qwen/Qwen2.5-Coder-7B-Instruct` |
 | **GPU allocation (train / sample)** | `NUM_TRAIN_GPUS` / `NUM_SAMPLING_ENGINES` | `4` / `4` | `8` / `8` |
 | **Rollout concurrency** | `BATCH_SIZE` $\times$ `N_ROLLOUTS` | `8` $\times$ `8` (`64`/step) | `16` $\times$ `8` (`128`/step) |

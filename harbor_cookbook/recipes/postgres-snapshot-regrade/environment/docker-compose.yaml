@@ -1,0 +1,28 @@
+# Harbor supplies main's build context, command, volumes, and resource limits.
+services:
+  main:
+    environment:
+      PGHOST: database
+      PGPORT: "5432"
+      PGDATABASE: orders
+      PGUSER: agent
+      PGPASSWORD: agent
+    depends_on:
+      database:
+        condition: service_healthy
+
+  database:
+    build:
+      context: ./database
+    environment:
+      POSTGRES_DB: orders
+      # Initialization requires a password. pg_hba.conf rejects remote
+      # superuser connections, including those using this demo password.
+      POSTGRES_PASSWORD: cookbook-local-only
+    command: ["postgres", "-c", "hba_file=/etc/postgresql/recipe-pg_hba.conf"]
+    healthcheck:
+      test: ["CMD", "pg_isready", "-h", "127.0.0.1", "-U", "agent", "-d", "orders"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+      start_period: 5s

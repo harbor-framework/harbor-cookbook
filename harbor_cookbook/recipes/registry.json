@@ -12,6 +12,11 @@
       "path": "recipes/multi-container"
     },
     {
+      "name": "postgres-snapshot-regrade",
+      "description": "Capture PostgreSQL sidecar state as an artifact, grade it in a separate verifier, and regrade without the original database.",
+      "path": "recipes/postgres-snapshot-regrade"
+    },
+    {
       "name": "mcp-tools",
       "description": "Giving agents access to custom MCP tools via a FastMCP server running in a companion container.",
       "path": "recipes/mcp-tools"
